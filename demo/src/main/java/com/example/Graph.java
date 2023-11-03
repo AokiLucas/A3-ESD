@@ -47,7 +47,7 @@ class Graph<T> {
         StringBuilder builder = new StringBuilder(); 
 
         FileWriter csvFileWriter = new FileWriter("Graph.csv");
-        csvFileWriter.append("Vertice, peso (V), Aresta\n");
+        csvFileWriter.append("Vertice, peso (V), Aresta, peso (A)\n");
 
         for (T vertex : graph.keySet()) {
             builder.append(vertex.toString() + " (" + vertexWeights.get(vertex) + "): ");
