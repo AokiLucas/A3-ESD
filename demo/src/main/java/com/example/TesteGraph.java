@@ -10,22 +10,21 @@ public class TesteGraph {
         //String text = TextClean.LoadText("demo\\models\\essayWord.txt");
         text = TextClean.Regex(text);
         text = TextClean.StopWords(text); 
-        
-        
 
-        String[] cleanText = TextClean.Lematizacao(TextClean.Tokenizacao(text), TextClean.POSTagger(text));
+        String[] tokens = TextClean.Tokenizacao(text);
+        
+        String[] cleanText = TextClean.Lematizacao(TextClean.Tokenizacao(text), TextClean.POSTagger(tokens));
 
         //Vai adicionar a palavra atual a proxima como aresta
         for (int i = 0; i < cleanText.length - 1; i++) {
             graphObject.addEdge(cleanText[i], cleanText[i+1]);
         }
 
-        //graphObject.addEdge("0", "1");
-        //graphObject.addEdge("0", "teste");
-
         System.out.println("Graph:\n" + graphObject.printGraph());
 
-        graphObject.hasVertex("4");
-        graphObject.hasEdge("teste", "texto");
+        graphObject.visualizeGraph();
+
+        //graphObject.hasVertex("4");
+        //graphObject.hasEdge("teste", "texto");
     }
 }

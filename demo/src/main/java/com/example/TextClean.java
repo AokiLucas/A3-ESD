@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -51,7 +52,7 @@ public class TextClean {
 
         // Tira digitos
         pattern = "\\d";
-        text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll(""); 
+        text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
 
         return text;
     }
@@ -79,15 +80,11 @@ public class TextClean {
 
         List<String> sotpWords = Files.readAllLines(filePath);
 
-        System.out.println("Antes da limpeza:" + tokenizedText.size());
-
         // Converte o texto para lowerCase
         tokenizedText = tokenizedText.stream().map(line -> line).collect(Collectors.toList());
 
         // Remove todas as palavras em stopWords
         tokenizedText.removeAll(sotpWords);
-
-        System.out.println("Depois da limpeza:" + tokenizedText.size());
 
         String result = tokenizedText.stream().map(n -> String.valueOf(n))
                 .collect(Collectors.joining(" ", "", ""));
@@ -95,13 +92,12 @@ public class TextClean {
         return result;
     }
 
-    static String[] POSTagger(String text) {
+    static String[] POSTagger(String[] tokens) {
         try (InputStream modelInputStream = new FileInputStream(new File("demo\\models\\pt-pos-maxent.bin"));) {
-            String[] tokenizedText = Tokenizacao(text);
             POSModel posModel = new POSModel(modelInputStream);
             POSTaggerME posTaggerME = new POSTaggerME(posModel);
 
-            String tags[] = posTaggerME.tag(tokenizedText);
+            String tags[] = posTaggerME.tag(tokens);
 
             return tags;
         } catch (IOException e) {
@@ -111,12 +107,27 @@ public class TextClean {
     }
 
     static String[] Lematizacao(String[] tokenizedText, String[] tagedText) {
-        final String[] tokens = tokenizedText;
-        final String[] tags = tagedText;
+        String[] tokens = tokenizedText;
+        String[] tags = tagedText;
+
+        List<String> tokensL = new ArrayList<>(Arrays.asList(tokens));
+        List<String> tagsL = new ArrayList<>(Arrays.asList(tags));
 
         final Lemmatizer lemmatizer;
         final String[] lemmas;
         try {
+
+            for (int i = tagsL.size() - 1; i >= 0; i--) {
+
+                if (tagsL.get(i).startsWith("v")) {
+                    tokensL.remove(i);
+                    tagsL.remove(i);
+                }
+            }
+
+            tokens = tokensL.toArray(new String[0]);
+            tags = tagsL.toArray(new String[0]);
+
             lemmatizer = new Lemmatizer();
             lemmas = lemmatizer.lemmatize(tokens, tags);
 
