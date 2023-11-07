@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.Normalizer;
@@ -29,13 +30,14 @@ public class TextClean {
         // Lematizacao(Tokenizacao(text), POSTagger(text));
     }
 
+    // Le o nosso arquivo txt
     static String LoadText(String path) throws IOException {
         Path filePath = Path.of(path);
 
-        String text = Files.readString(filePath);
+        String text = Files.readString(filePath, StandardCharsets.ISO_8859_1);
 
         text = text.toLowerCase();
-        // Remover URL's
+        // Remover URL's do texto
         String pattern = ("((http|https)://)(www.)?[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)");
         text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
 
@@ -50,7 +52,7 @@ public class TextClean {
         pattern = "([\\p{P}\\p{S}&&[^-]])";
         text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
 
-        // Tira digitos
+        // Tira digitos numericos
         pattern = "\\d";
         text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
 
@@ -58,6 +60,7 @@ public class TextClean {
     }
 
     static String[] Tokenizacao(String rawText) {
+        // Usa um modelo pre treinado para fazer a tokenização com maxima entropia
         try (InputStream modelInputStream = new FileInputStream(new File("demo\\models\\pt-token.bin"))) {
             TokenizerModel tokenizerModel = new TokenizerModel(modelInputStream);
             TokenizerME tokenizer = new TokenizerME(tokenizerModel);
@@ -83,7 +86,7 @@ public class TextClean {
         // Converte o texto para lowerCase
         tokenizedText = tokenizedText.stream().map(line -> line).collect(Collectors.toList());
 
-        // Remove todas as palavras em stopWords
+        // Remove todas as palavras em stopWords do nosso arquivo
         tokenizedText.removeAll(sotpWords);
 
         String result = tokenizedText.stream().map(n -> String.valueOf(n))
@@ -93,10 +96,12 @@ public class TextClean {
     }
 
     static String[] POSTagger(String[] tokens) {
+        // Utiliza um modelo pre treinado para fazer a Tag com maxima entropia
         try (InputStream modelInputStream = new FileInputStream(new File("demo\\models\\pt-pos-maxent.bin"));) {
             POSModel posModel = new POSModel(modelInputStream);
             POSTaggerME posTaggerME = new POSTaggerME(posModel);
 
+            // Gera as tags com base nos tokens das palavras
             String tags[] = posTaggerME.tag(tokens);
 
             return tags;
@@ -117,6 +122,7 @@ public class TextClean {
         final String[] lemmas;
         try {
 
+            // Retira os verbos
             for (int i = tagsL.size() - 1; i >= 0; i--) {
 
                 if (tagsL.get(i).startsWith("v")) {

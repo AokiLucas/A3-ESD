@@ -20,9 +20,12 @@ import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.view.mxGraph;
 
 class Graph<T> {
+    //Grafo
     private Map<T, Map<T, Integer>> graph = new HashMap<>();
+    //Peso dos vertices
     private Map<T, Integer> vertexWeights = new HashMap<>();
 
+    // Adicionar Vertice
     public void addEdge(T source, T destination) {
         if (!graph.containsKey(source)) {
             addVertex(source);
@@ -38,6 +41,7 @@ class Graph<T> {
         vertexWeights.put(destination, vertexWeights.get(destination) + 1);
     }
 
+    /*
     public void hasVertex(T vertex) {
         if (graph.containsKey(vertex)) {
             System.out
@@ -55,8 +59,9 @@ class Graph<T> {
         } else {
             System.out.println("The Graph has no edge between " + source + " and " + destination);
         }
-    }
+    }*/
 
+    // Adicionar Aresta
     private void addVertex(T vertex) {
         graph.put(vertex, new HashMap<>());
         vertexWeights.put(vertex, 0); // Initialize the vertex weight to 0
@@ -68,8 +73,10 @@ class Graph<T> {
         FileWriter csvFileWriter = new FileWriter("Graph.csv");
         csvFileWriter.append("Vertice, peso (V), Aresta, peso (A)\n");
 
+        // Veritce
         for (T vertex : graph.keySet()) {
             builder.append(vertex.toString() + " (" + vertexWeights.get(vertex) + "): ");
+            // Arestas
             for (T node : graph.get(vertex).keySet()) {
                 builder.append(node.toString() + " (" + graph.get(vertex).get(node) + ") ");
 
@@ -85,6 +92,7 @@ class Graph<T> {
         return builder.toString();
     }
 
+    // Gerador de arquivo csv com o grafo
     public void csvWriter(FileWriter csvWriter, String vertex, String node) {
         try {
             csvWriter.append(vertex + node + "\n");
@@ -93,6 +101,7 @@ class Graph<T> {
         }
     }
 
+    // Gerador do grafo
     public void visualizeGraph() {
         mxGraph jgxAdapter = new mxGraph();
         Object parent = jgxAdapter.getDefaultParent();
@@ -101,13 +110,14 @@ class Graph<T> {
         try {
             Map<T, Object> vertexMap = new HashMap<>();
             for (T vertex : graph.keySet()) {
-                // Calculate the width of the vertex based on the label
+                // Calcula o comprimento do vertice com base no tamanho do texto
                 String label = vertex.toString() + " (" + vertexWeights.get(vertex) + ")";
-                double width = Math.max(80, label.length() * 10); // Estimate the width based on the number of
-                                                                  // characters in the label
+                double width = Math.max(80, label.length() * 10);
                 vertexMap.put(vertex, jgxAdapter.insertVertex(parent, null, label, 20, 20, width, 30));
             }
+            // Vertice
             for (T source : graph.keySet()) {
+                // Arestas
                 for (T destination : graph.get(source).keySet()) {
                     Object edge = jgxAdapter.insertEdge(parent, null, graph.get(source).get(destination),
                             vertexMap.get(source),
@@ -121,11 +131,11 @@ class Graph<T> {
             jgxAdapter.getModel().endUpdate();
         }
 
-        // Apply a hierarchical layout to the vertices
+        // Cria um grafo em um design hierarquico
         mxHierarchicalLayout layout = new mxHierarchicalLayout(jgxAdapter);
         layout.execute(jgxAdapter.getDefaultParent());
 
-        // Create a graph component and add it to a frame for visualization
+        // Abre um programa para visualização que possibilita edição
         mxGraphComponent graphComponent = new mxGraphComponent(jgxAdapter);
         JFrame frame = new JFrame();
         frame.getContentPane().add(graphComponent);
@@ -133,8 +143,7 @@ class Graph<T> {
         frame.pack();
         frame.setVisible(true);
 
-        // Create a buffered image and use the mxCellRenderer to draw the graph into the
-        // image
+        // Cria um imagem do grafo
         BufferedImage image = new BufferedImage((int) jgxAdapter.getGraphBounds().getWidth(),
                 (int) jgxAdapter.getGraphBounds().getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = image.createGraphics();
@@ -149,7 +158,7 @@ class Graph<T> {
             }
         });
 
-        // Write the image to a PNG file
+        // Salva a imagem como png
         File imgFile = new File("graph.png");
         try {
             ImageIO.write(image, "PNG", imgFile);

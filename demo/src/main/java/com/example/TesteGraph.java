@@ -6,8 +6,12 @@ public class TesteGraph {
     public static void main(String[] args) throws IOException {
         Graph<String> graphObject = new Graph<>();
 
-        String text = TextClean.LoadText("demo\\models\\textoTeste.txt");
-        //String text = TextClean.LoadText("demo\\models\\essayWord.txt");
+        // A forma de como os arquivos vão ser tratados vai ser melhorada para poder ler mais arquivos de uma vez
+        // e poder gerar de forma organizado os arquivos
+        //String text = TextClean.LoadText("demo\\models\\textoTeste.txt");
+        String text = TextClean.LoadText("demo\\resumes\\arq_1.txt");
+
+
         text = TextClean.Regex(text);
         text = TextClean.StopWords(text); 
 
@@ -23,8 +27,5 @@ public class TesteGraph {
         System.out.println("Graph:\n" + graphObject.printGraph());
 
         graphObject.visualizeGraph();
-
-        //graphObject.hasVertex("4");
-        //graphObject.hasEdge("teste", "texto");
     }
 }
