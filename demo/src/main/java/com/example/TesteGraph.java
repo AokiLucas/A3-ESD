@@ -15,7 +15,7 @@ public class TesteGraph {
         // String text = TextClean.LoadText("demo\\resumes\\arq_1.txt");
 
         for (FileDetails fileDetails : fileList) {
-            String text = TextClean.LoadText(fileDetails.getFilePath());
+            String text = TextClean.LoadText(fileDetails.getFilePath()+".txt");
             text = TextClean.Regex(text);
             text = TextClean.StopWords(text);
 

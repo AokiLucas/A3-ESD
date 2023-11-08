@@ -20,9 +20,9 @@ import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.view.mxGraph;
 
 class Graph<T> {
-    //Grafo
+    // Grafo
     private Map<T, Map<T, Integer>> graph = new HashMap<>();
-    //Peso dos vertices
+    // Peso dos vertices
     private Map<T, Integer> vertexWeights = new HashMap<>();
 
     // Adicionar Vertice
@@ -42,24 +42,29 @@ class Graph<T> {
     }
 
     /*
-    public void hasVertex(T vertex) {
-        if (graph.containsKey(vertex)) {
-            System.out
-                    .println("The Graph contains " + vertex + " as a vertex with weight " + vertexWeights.get(vertex));
-        } else {
-            System.out.println("The Graph does not contain " + vertex + " as a vertex");
-        }
-    }
-
-    public void hasEdge(T source, T destination) {
-        if (graph.get(source).containsKey(destination)) {
-            System.out.println("The Graph has an edge between " + source + " (" + vertexWeights.get(source) + ") and "
-                    + destination + " ( " + vertexWeights.get(destination) + ") with edge weight "
-                    + graph.get(source).get(destination));
-        } else {
-            System.out.println("The Graph has no edge between " + source + " and " + destination);
-        }
-    }*/
+     * public void hasVertex(T vertex) {
+     * if (graph.containsKey(vertex)) {
+     * System.out
+     * .println("The Graph contains " + vertex + " as a vertex with weight " +
+     * vertexWeights.get(vertex));
+     * } else {
+     * System.out.println("The Graph does not contain " + vertex + " as a vertex");
+     * }
+     * }
+     * 
+     * public void hasEdge(T source, T destination) {
+     * if (graph.get(source).containsKey(destination)) {
+     * System.out.println("The Graph has an edge between " + source + " (" +
+     * vertexWeights.get(source) + ") and "
+     * + destination + " ( " + vertexWeights.get(destination) +
+     * ") with edge weight "
+     * + graph.get(source).get(destination));
+     * } else {
+     * System.out.println("The Graph has no edge between " + source + " and " +
+     * destination);
+     * }
+     * }
+     */
 
     // Adicionar Aresta
     private void addVertex(T vertex) {
@@ -70,7 +75,7 @@ class Graph<T> {
     public String printGraph(String filePath, String fileName) throws IOException {
         StringBuilder builder = new StringBuilder();
 
-        FileWriter csvFileWriter = new FileWriter(filePath+fileName+".csv");
+        FileWriter csvFileWriter = new FileWriter(filePath + "\\" + fileName + ".csv");
         csvFileWriter.append("Vertice, peso (V), Aresta, peso (A)\n");
 
         // Veritce
@@ -159,7 +164,7 @@ class Graph<T> {
         });
 
         // Salva a imagem como png
-        File imgFile = new File(filePath+fileName+".png");
+        File imgFile = new File(filePath + "\\" + fileName + ".png");
         try {
             ImageIO.write(image, "PNG", imgFile);
         } catch (IOException e) {
