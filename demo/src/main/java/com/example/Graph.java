@@ -67,10 +67,10 @@ class Graph<T> {
         vertexWeights.put(vertex, 0); // Initialize the vertex weight to 0
     }
 
-    public String printGraph() throws IOException {
+    public String printGraph(String filePath, String fileName) throws IOException {
         StringBuilder builder = new StringBuilder();
 
-        FileWriter csvFileWriter = new FileWriter("Graph.csv");
+        FileWriter csvFileWriter = new FileWriter(filePath+fileName+".csv");
         csvFileWriter.append("Vertice, peso (V), Aresta, peso (A)\n");
 
         // Veritce
@@ -102,7 +102,7 @@ class Graph<T> {
     }
 
     // Gerador do grafo
-    public void visualizeGraph() {
+    public void visualizeGraph(String filePath, String fileName) {
         mxGraph jgxAdapter = new mxGraph();
         Object parent = jgxAdapter.getDefaultParent();
 
@@ -159,7 +159,7 @@ class Graph<T> {
         });
 
         // Salva a imagem como png
-        File imgFile = new File("graph.png");
+        File imgFile = new File(filePath+fileName+".png");
         try {
             ImageIO.write(image, "PNG", imgFile);
         } catch (IOException e) {
