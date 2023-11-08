@@ -12,15 +12,18 @@ public class ReadFiles {
         List<FileDetails> fileList = new ArrayList<>();
         try {
 
+            // Percorre a pasta e filtra por todos os arquivos .txt
             Files.walk(Paths.get(folderPath))
                     .filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".txt"))
                     .forEach(p -> {
+                        // Salva o nome dos arquivos sem a extensao
                         String fileNameWithoutExtension = p.getFileName().toString();
                         if (fileNameWithoutExtension.indexOf(".") > 0)
                             fileNameWithoutExtension = fileNameWithoutExtension.substring(0,
                                     fileNameWithoutExtension.lastIndexOf("."));
 
+                        // Salva o path sem a extensao extensao
                         String filePathWithoutExtension = p.toString();
                         if (filePathWithoutExtension.indexOf(".") > 0)
                             filePathWithoutExtension = filePathWithoutExtension.substring(0,
@@ -28,7 +31,7 @@ public class ReadFiles {
 
                         fileList.add(new FileDetails(fileNameWithoutExtension, filePathWithoutExtension));
 
-                        // Create a new directory
+                        // Cria uma pasta utilizando o path name
                         String newDirPath = filePathWithoutExtension;
                         Path dirPath = Paths.get(newDirPath);
                         if (!Files.exists(dirPath)) {
@@ -52,13 +55,5 @@ public class ReadFiles {
             e.printStackTrace();
         }
         return fileList;
-    }
-
-    public static void main(String[] args) {
-        List<FileDetails> fileDetails = readTxtFiles("demo\\resumes");
-
-        for (FileDetails fileDetails2 : fileDetails) {
-            System.out.println(fileDetails2.getFileName());
-        }
     }
 }

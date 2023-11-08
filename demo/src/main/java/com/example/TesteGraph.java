@@ -5,31 +5,45 @@ import java.util.List;
 
 public class TesteGraph {
     public static void main(String[] args) throws IOException {
+        // Classe grafo
         Graph<String> graphObject = new Graph<>();
+
+        // Classe dos arquivos
+        // Incializar dando a pasta onde os arquivos estão
         List<FileDetails> fileList = ReadFiles.readTxtFiles("demo\\resumes");
 
-        // A forma de como os arquivos vão ser tratados vai ser melhorada para poder ler
-        // mais arquivos de uma vez
-        // e poder gerar de forma organizado os arquivos
-        // String text = TextClean.LoadText("demo\\models\\textoTeste.txt");
-        // String text = TextClean.LoadText("demo\\resumes\\arq_1.txt");
-
+        // Vai executar para cada arquivo dentro da pasta
+        // TODO Criar uma lista para poder acessar os grafos individualmente e ve o que
+        // fazer
+        // em relacao aos autores, provavelmente uma lista co-relacionado o grafo com
+        // autor
         for (FileDetails fileDetails : fileList) {
-            String text = TextClean.LoadText(fileDetails.getFilePath()+".txt");
+            // Inicializa a LoadText com o arquivo
+            String text = TextClean.LoadText(fileDetails.getFilePath() + ".txt");
+
+            // Limpeza
             text = TextClean.Regex(text);
             text = TextClean.StopWords(text);
 
+            // Tokenizacao
             String[] tokens = TextClean.Tokenizacao(text);
 
+            // Texto ja limpo e lematizado
             String[] cleanText = TextClean.Lematizacao(TextClean.Tokenizacao(text), TextClean.POSTagger(tokens));
 
-            // Vai adicionar a palavra atual a proxima como aresta
+            // Vai adicionar a palavra atual a proxima com uma aresta e aumentar seu peso
+            // caso ja exista
+            // Caso a palavra nao seja um vertice ainda vai criar o mesmo antes e depois
+            // realizar o nó
             for (int i = 0; i < cleanText.length - 1; i++) {
                 graphObject.addEdge(cleanText[i], cleanText[i + 1]);
             }
 
-            System.out.println("Graph:\n" + graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName()));
+            // Da um print no grafo
+            System.out
+                    .println("Graph:\n" + graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName()));
 
+            // Gera a imagem do grafo como png
             graphObject.visualizeGraph(fileDetails.getFilePath(), fileDetails.getFileName());
         }
 

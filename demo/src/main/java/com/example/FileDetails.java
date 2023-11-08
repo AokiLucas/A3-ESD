@@ -25,5 +25,4 @@ public class FileDetails {
         this.filePath = filePath;
     }
 
-    
 }

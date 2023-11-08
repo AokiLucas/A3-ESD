@@ -10,12 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.view.mxGraph;
 
@@ -25,18 +22,20 @@ class Graph<T> {
     // Peso dos vertices
     private Map<T, Integer> vertexWeights = new HashMap<>();
 
-    // Adicionar Vertice
+    // Adicionar Aresta
     public void addEdge(T source, T destination) {
+        // Se nao existir o vertice ele ira criar
         if (!graph.containsKey(source)) {
             addVertex(source);
         }
         if (!graph.containsKey(destination)) {
             addVertex(destination);
         }
+        // Lista das Arestas
         Map<T, Integer> edges = graph.get(source);
         edges.put(destination, edges.getOrDefault(destination, 0) + 1);
 
-        // Increase the weight of the source and destination vertices
+        // Aumenta o peso interno da palavras
         vertexWeights.put(source, vertexWeights.get(source) + 1);
         vertexWeights.put(destination, vertexWeights.get(destination) + 1);
     }
@@ -66,10 +65,10 @@ class Graph<T> {
      * }
      */
 
-    // Adicionar Aresta
+    // Adicionar Vertice
     private void addVertex(T vertex) {
         graph.put(vertex, new HashMap<>());
-        vertexWeights.put(vertex, 0); // Initialize the vertex weight to 0
+        vertexWeights.put(vertex, 0);
     }
 
     public String printGraph(String filePath, String fileName) throws IOException {
@@ -141,12 +140,14 @@ class Graph<T> {
         layout.execute(jgxAdapter.getDefaultParent());
 
         // Abre um programa para visualização que possibilita edição
-        mxGraphComponent graphComponent = new mxGraphComponent(jgxAdapter);
-        JFrame frame = new JFrame();
-        frame.getContentPane().add(graphComponent);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+        /*
+         * mxGraphComponent graphComponent = new mxGraphComponent(jgxAdapter);
+         * JFrame frame = new JFrame();
+         * frame.getContentPane().add(graphComponent);
+         * frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         * frame.pack();
+         * frame.setVisible(true);
+         */
 
         // Cria um imagem do grafo
         BufferedImage image = new BufferedImage((int) jgxAdapter.getGraphBounds().getWidth(),

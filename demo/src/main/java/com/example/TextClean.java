@@ -24,6 +24,7 @@ import opennlp.tools.tokenize.TokenizerModel;
 public class TextClean {
 
     public TextClean(String path) throws IOException {
+        // Ordem esperada
         // String text = LoadText(path);
         // text = Regex(text);
         // text = StopWords(text);
@@ -44,6 +45,7 @@ public class TextClean {
         return text;
     }
 
+    // Limpeza
     static String Regex(String text) {
 
         String pattern;
@@ -59,6 +61,7 @@ public class TextClean {
         return text;
     }
 
+    // Tokenizacao
     static String[] Tokenizacao(String rawText) {
         // Usa um modelo pre treinado para fazer a tokenização com maxima entropia
         try (InputStream modelInputStream = new FileInputStream(new File("demo\\models\\pt-token.bin"))) {
@@ -77,6 +80,7 @@ public class TextClean {
         }
     }
 
+    // Limpeza
     static String StopWords(String text) throws IOException {
         Path filePath = Path.of("demo\\models\\stopwords.txt");
         List<String> tokenizedText = Arrays.asList(Tokenizacao(text));
@@ -95,6 +99,7 @@ public class TextClean {
         return result;
     }
 
+    // Tags das palavras
     static String[] POSTagger(String[] tokens) {
         // Utiliza um modelo pre treinado para fazer a Tag com maxima entropia
         try (InputStream modelInputStream = new FileInputStream(new File("demo\\models\\pt-pos-maxent.bin"));) {
@@ -111,10 +116,12 @@ public class TextClean {
         }
     }
 
+    // Lematiza o texto ja tokenizado utilizando as Tags
     static String[] Lematizacao(String[] tokenizedText, String[] tagedText) {
         String[] tokens = tokenizedText;
         String[] tags = tagedText;
 
+        // Listas auxiliares para poder retirar os verbos e remontar o Array
         List<String> tokensL = new ArrayList<>(Arrays.asList(tokens));
         List<String> tagsL = new ArrayList<>(Arrays.asList(tags));
 
@@ -131,6 +138,7 @@ public class TextClean {
                 }
             }
 
+            //Remontagem dos Arrays sem os verbos
             tokens = tokensL.toArray(new String[0]);
             tags = tagsL.toArray(new String[0]);
 
