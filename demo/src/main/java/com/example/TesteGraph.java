@@ -12,8 +12,8 @@ public class TesteGraph {
         // Incializar dando a pasta onde os arquivos estão
         List<FileDetails> fileList = ReadFiles.readTxtFiles("demo\\resumes");
 
-        // Vai executar para cada arquivo dentro da pasta
-        // TODO Criar uma lista para poder acessar os grafos individualmente e ve o que
+        // Vai executar para cada arquivo '.txt' dentro da pasta
+        // TODO Criar uma lista para poder acessar os grafos individualmente e ver o que
         // fazer
         // em relacao aos autores, provavelmente uma lista co-relacionado o grafo com
         // autor
@@ -36,9 +36,11 @@ public class TesteGraph {
             // Caso a palavra nao seja um vertice ainda vai criar o mesmo antes e depois
             // realizar o nó
             for (int i = 0; i < cleanText.length - 1; i++) {
-                graphObject.addEdge(cleanText[i], cleanText[i + 1]);
+                if (!cleanText[i].equals(null) && !cleanText[i + 1].equals(null))
+                    graphObject.addEdge(cleanText[i], cleanText[i + 1]);
             }
 
+            // Se tanto o arqivo '.csv' e '.png' já existam eles são apenas substituidos
             // Da um print no grafo
             System.out
                     .println("Graph:\n" + graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName()));
