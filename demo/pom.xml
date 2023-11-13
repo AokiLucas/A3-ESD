@@ -20,6 +20,13 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>1.7.36</version>
+    </dependency>
+
+
 <dependency>
   <groupId>org.jgrapht</groupId>
 <artifactId>jgrapht-core</artifactId>

@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,8 +74,10 @@ class Graph<T> {
         vertexWeights.put(vertex, 0);
     }
 
-    public String printGraph(String filePath, String fileName) throws IOException {
+    public void printGraph(String filePath, String fileName) throws IOException {
         StringBuilder builder = new StringBuilder();
+
+        folderCreater(filePath);
 
         FileWriter csvFileWriter = new FileWriter(filePath + "\\" + fileName + ".csv");
         csvFileWriter.append("Vertice, peso (V), Aresta, peso (A)\n");
@@ -93,7 +98,20 @@ class Graph<T> {
 
         csvFileWriter.flush();
         csvFileWriter.close();
-        return builder.toString();
+
+        visualizeGraph(filePath, fileName);
+    }
+
+    public void folderCreater(String newDirPath) {
+        // Cria uma pasta utilizando o path name do arquivo '.txt'
+        Path dirPath = Paths.get(newDirPath);
+        if (!Files.exists(dirPath)) {
+            try {
+                Files.createDirectories(dirPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // Gerador de arquivo csv com o grafo

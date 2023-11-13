@@ -30,17 +30,6 @@ public class ReadFiles {
                                     filePathWithoutExtension.lastIndexOf("."));
 
                         fileList.add(new FileDetails(fileNameWithoutExtension, filePathWithoutExtension));
-
-                        // Cria uma pasta utilizando o path name
-                        String newDirPath = filePathWithoutExtension;
-                        Path dirPath = Paths.get(newDirPath);
-                        if (!Files.exists(dirPath)) {
-                            try {
-                                Files.createDirectories(dirPath);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
                     });
 
             // Vai ordenar em ordem crescente com base no nome dos arquivos
@@ -55,5 +44,11 @@ public class ReadFiles {
             e.printStackTrace();
         }
         return fileList;
+    }
+
+    public static void printFiles(List<FileDetails> fileList){
+        for (FileDetails fileDetails : fileList) {
+            System.out.println(fileDetails.getFileName());
+        }
     }
 }
