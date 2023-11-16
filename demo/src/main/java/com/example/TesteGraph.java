@@ -31,11 +31,13 @@ public class TesteGraph {
             number = scanner.nextInt();
 
             switch (number) {
+                // Print de todos os arquivos '.txt' dentro da pasta
                 case 1:
                     System.out.println("\nArquivos encotrados na pasta '" + folderPath + "': ");
                     ReadFiles.printFiles(fileList);
                     break;
 
+                // Vai gerar todos os grafos
                 case 2:
                     runGraph(fileList, graphObject);
                     clearPrompt();
@@ -43,6 +45,8 @@ public class TesteGraph {
                             .println(
                                     "\nTodos os grafos foram gerados em uma pasta com o nome do próprio arquivo '.txt'");
                     break;
+
+                // Vai gerar os grafos dos arquivos selecionados para o mesmo
                 case 3:
                     scanner.nextLine();
                     chooseFiles(scanner, fileList, graphObject);
@@ -64,7 +68,10 @@ public class TesteGraph {
         clearPrompt();
 
         System.out.println(
-                "\nDigite o nome do arquivo que deseja e aperte 'enter'.\nApós digitar escreva 'sair' quando quiser parar.\n");
+                "\n- Digite o nome do arquivo que deseja e aperte 'enter'." +
+                        "\n- Digite '.files' para vizualizar os arquivos da pasta." +
+                        "\n- Digite '.lista' para vizualizar os arquivos escolhidos para gerar o Grafo." +
+                        "\n- Digite '.sair' quando quiser parar.\n");
 
         String i;
         List<FileDetails> tempFileList = new ArrayList<>();
@@ -72,6 +79,8 @@ public class TesteGraph {
             i = scanner.nextLine().toLowerCase();
             FileDetails foundFile = null;
 
+            // Retorna o nosso arquivo desejado quando encontrado dentro da lista de
+            // elementos da pasta
             for (FileDetails fileDetails : fileList) {
                 if (fileDetails.getFileName().equals(i)) {
                     foundFile = fileDetails;
@@ -79,28 +88,58 @@ public class TesteGraph {
                 }
             }
 
+            // Se existe o arquivo
             if (foundFile != null) {
                 boolean alreadyExists = false;
 
+                // Procura dentro da lista temporaria se o arquivo ja foi adicionado antes ou
+                // não
                 for (FileDetails tempFileDetail : tempFileList) {
                     if (tempFileDetail.getFileName().equals(i)) {
                         alreadyExists = true;
-                        System.out.println("\nArquivo ja adicionado\n");
+                        System.out.println("\n- O arquivo já foi adicionado.\n");
                         break;
                     }
                 }
 
+                // Se o arquivo não está dentro da lista temporaria ele vai adicionar o mesmo
                 if (!alreadyExists) {
                     tempFileList.add(foundFile);
-                    System.out.println("\nArquivo adicionado\n");
+                    System.out.println("\n- Arquivo adicionado.\n");
+                }
+            } // Vai mostrar todos os arquivos da pasta
+            else if (i.equals(".files")) {
+                System.out.println("\nArquivos encotrados: ");
+                ReadFiles.printFiles(fileList);
+                System.out.println("");
+            } // Vai mostrar todos os elementos na lista temporaria caso ja tenham algum
+            else if (i.equals(".lista")) {
+                if (tempFileList.isEmpty()) {
+                    System.out.println("\n- A lista ainda está vazia no momento.\n");
+                } else {
+                    System.out.println("\nArquivos na lista: ");
+                    ReadFiles.printFiles(tempFileList);
+                    System.out.println("");
                 }
             }
+            // Se for diferente da palavra '.sair' e das demais ele entende que deveria ser
+            // o nome de uma arquivo e que o nome está errado
+            else if (!i.equals(".sair")) {
+                System.out.println("\n- Arquivo não encontrado.\n");
+            }
+        } // Executa até o usuário desejar sair
+        while (!i.equals(".sair"));
 
-        } while (!i.equals("sair"));
-
-        runGraph(tempFileList, graphObject);
-        clearPrompt();
-        System.out.println("\nGrafo(s) gerado com sucesso.");
+        // Se no final a lista não for vazia vai executar a geração dos grafos dos
+        // elementos desejados
+        if (!tempFileList.isEmpty()) {
+            runGraph(tempFileList, graphObject);
+            clearPrompt();
+            System.out.println("\n- Grafo(s) gerado com sucesso.");
+        } // Só limpa o console e volta para o menu inicial
+        else {
+            clearPrompt();
+        }
 
     }
 
@@ -129,13 +168,14 @@ public class TesteGraph {
             // Caso a palavra nao seja um vertice ainda vai criar o mesmo antes e depois
             // realizar o nó
             for (int i = 0; i < cleanText.length - 1; i++) {
-        graphObject.addEdge(cleanText[i], cleanText[i + 1]); 
-}
-
+                graphObject.addEdge(cleanText[i], cleanText[i + 1]);
+            }
 
             // Se tanto o arqivo '.csv' e '.png' já existam eles são apenas substituidos
             // Da um print no grafo e gera a imagem do grafo como png
-            graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName());
+            
+            graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), "_graph");
+            graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), "_topics");
         }
     }
 

@@ -82,6 +82,7 @@ public class TextClean {
 
     // Limpeza
     static String StopWords(String text) throws IOException {
+        //Le o nosso arquivo 'stopwords.txt'
         Path filePath = Path.of("demo\\models\\stopwords.txt");
         List<String> tokenizedText = Arrays.asList(Tokenizacao(text));
 
