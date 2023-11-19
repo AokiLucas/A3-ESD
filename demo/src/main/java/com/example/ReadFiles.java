@@ -28,7 +28,8 @@ public class ReadFiles {
                             filePathWithoutExtension = filePathWithoutExtension.substring(0,
                                     filePathWithoutExtension.lastIndexOf("."));
 
-                        fileList.add(new FileDetails(fileNameWithoutExtension, filePathWithoutExtension));
+                        fileList.add(
+                                new FileDetails(fileNameWithoutExtension, filePathWithoutExtension, "demo\\graphs"));
                     });
 
             // Vai ordenar em ordem crescente com base no nome dos arquivos
@@ -45,7 +46,7 @@ public class ReadFiles {
         return fileList;
     }
 
-    public static void printFiles(List<FileDetails> fileList){
+    public static void printFiles(List<FileDetails> fileList) {
         for (FileDetails fileDetails : fileList) {
             System.out.println(fileDetails.getFileName());
         }

@@ -3,10 +3,12 @@ package com.example;
 public class FileDetails {
     private String fileName;
     private String filePath;
+    private String graphPath;
 
-    public FileDetails(String fileName, String filePath) {
+    public FileDetails(String fileName, String filePath, String graphPath) {
         this.fileName = fileName;
         this.filePath = filePath;
+        this.graphPath = graphPath;
     }
 
     public String getFileName() {
@@ -25,4 +27,11 @@ public class FileDetails {
         this.filePath = filePath;
     }
 
+    public String getGraphPath() {
+        return graphPath;
+    }
+
+    public void setGraphPath(String graphPath) {
+        this.graphPath = graphPath;
+    }
 }

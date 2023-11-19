@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TesteGraph {
+    static long startTimer;
+    static long endTimer;
+
     public static void main(String[] args) throws IOException {
+
         // Classe grafo
         Graph<String> graphObject = new Graph<>();
 
@@ -39,11 +43,17 @@ public class TesteGraph {
 
                 // Vai gerar todos os grafos
                 case 2:
+                    startTimer = System.nanoTime();
                     runGraph(fileList, graphObject);
+                    endTimer = System.nanoTime() - startTimer;
+
                     clearPrompt();
                     System.out
                             .println(
                                     "\nTodos os grafos foram gerados em uma pasta com o nome do próprio arquivo '.txt'");
+
+                    System.out.println(endTimer / 1000000000 + "s");
+
                     break;
 
                 // Vai gerar os grafos dos arquivos selecionados para o mesmo
@@ -133,9 +143,16 @@ public class TesteGraph {
         // Se no final a lista não for vazia vai executar a geração dos grafos dos
         // elementos desejados
         if (!tempFileList.isEmpty()) {
+
+            startTimer = System.nanoTime();
             runGraph(tempFileList, graphObject);
+            endTimer = System.nanoTime() - startTimer;
+
             clearPrompt();
             System.out.println("\n- Grafo(s) gerado com sucesso.");
+
+            System.out.println(endTimer / 1000000000 + "s");
+
         } // Só limpa o console e volta para o menu inicial
         else {
             clearPrompt();
@@ -174,8 +191,10 @@ public class TesteGraph {
             // Se tanto o arqivo '.csv' e '.png' já existam eles são apenas substituidos
             // Da um print no grafo e gera a imagem do grafo como png
 
-            graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), "_graph");
-            graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), "_topics");
+            graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), fileDetails.getGraphPath(),
+                    "_graph");
+            graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), fileDetails.getGraphPath(),
+                    "_topics");
         }
     }
 

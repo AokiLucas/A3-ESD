@@ -45,7 +45,7 @@ public class TextClean {
         return text;
     }
 
-    // Limpeza
+    // Limpeza Regex
     static String Regex(String text) {
 
         String pattern;
@@ -82,7 +82,7 @@ public class TextClean {
 
     // Limpeza
     static String StopWords(String text) throws IOException {
-        //Le o nosso arquivo 'stopwords.txt'
+        // Le o nosso arquivo 'stopwords.txt'
         Path filePath = Path.of("demo\\models\\stopwords.txt");
         List<String> tokenizedText = Arrays.asList(Tokenizacao(text));
 
@@ -139,7 +139,7 @@ public class TextClean {
                 }
             }
 
-            //Remontagem dos Arrays sem os verbos
+            // Remontagem dos Arrays sem os verbos
             tokens = tokensL.toArray(new String[0]);
             tags = tagsL.toArray(new String[0]);
 

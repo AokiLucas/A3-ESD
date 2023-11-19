@@ -76,12 +76,13 @@ class Graph<T> {
         vertexWeights.put(vertex, 0);
     }
 
-    public void printGraph(String filePath, String fileName, String filePoint) throws IOException {
+    public void printGraph(String filePath, String fileName, String graphPath, String filePoint) throws IOException {
         StringBuilder builder = new StringBuilder();
 
-        folderCreater(filePath);
+        // folderCreater(filePath);
+        folderCreater(graphPath + "\\" + fileName);
 
-        FileWriter csvFileWriter = new FileWriter(filePath + "\\" + fileName + filePoint + ".csv");
+        FileWriter csvFileWriter = new FileWriter(graphPath + "\\" + fileName + "\\" + fileName + filePoint + ".csv");
         csvFileWriter.append("Vertice, peso (V), Aresta, peso (A)\n");
 
         if (filePoint.equals("_topics")) {
@@ -120,7 +121,8 @@ class Graph<T> {
         csvFileWriter.flush();
         csvFileWriter.close();
 
-        visualizeGraph(filePath, fileName, filePoint);
+        //Gera a imagem do grafo
+        visualizeGraph(filePath, fileName, graphPath, filePoint);
     }
 
     public List<T> getImportantVertices() {
@@ -165,7 +167,7 @@ class Graph<T> {
     }
 
     // Gerador do grafo
-    public void visualizeGraph(String filePath, String fileName, String filePoint) {
+    public void visualizeGraph(String filePath, String fileName, String graphPath, String filePoint) {
         mxGraph jgxAdapter = new mxGraph();
         Object parent = jgxAdapter.getDefaultParent();
 
@@ -195,27 +197,33 @@ class Graph<T> {
                         jgxAdapter.getModel().setStyle(edge, style);
                     }
                 }
-            } else if (filePoint.equals("_graph")) {
-                Map<T, Object> vertexMap = new HashMap<>();
-                for (T vertex : graph.keySet()) {
-                    // Calcula o comprimento do vertice com base no tamanho do texto
-                    String label = vertex.toString() + " (" + vertexWeights.get(vertex) + ")";
-                    double width = Math.max(80, label.length() * 10);
-                    vertexMap.put(vertex, jgxAdapter.insertVertex(parent, null, label, 20, 20, width, 30));
-                }
-                // Vertice
-                for (T source : graph.keySet()) {
-                    // Arestas
-                    for (T destination : graph.get(source).keySet()) {
-                        Object edge = jgxAdapter.insertEdge(parent, null, graph.get(source).get(destination),
-                                vertexMap.get(source),
-                                vertexMap.get(destination), "labelBackgroundColor=white");
-                        String style = jgxAdapter.getModel().getStyle(edge);
-                        style += ";endArrow=classic"; // Add an arrow at the end of the edge
-                        jgxAdapter.getModel().setStyle(edge, style);
-                    }
-                }
-            }
+            } else {
+                return;
+            } /*
+               * else if (filePoint.equals("_graph")) {
+               * Map<T, Object> vertexMap = new HashMap<>();
+               * for (T vertex : graph.keySet()) {
+               * // Calcula o comprimento do vertice com base no tamanho do texto
+               * String label = vertex.toString() + " (" + vertexWeights.get(vertex) + ")";
+               * double width = Math.max(80, label.length() * 10);
+               * vertexMap.put(vertex, jgxAdapter.insertVertex(parent, null, label, 20, 20,
+               * width, 30));
+               * }
+               * // Vertice
+               * for (T source : graph.keySet()) {
+               * // Arestas
+               * for (T destination : graph.get(source).keySet()) {
+               * Object edge = jgxAdapter.insertEdge(parent, null,
+               * graph.get(source).get(destination),
+               * vertexMap.get(source),
+               * vertexMap.get(destination), "labelBackgroundColor=white");
+               * String style = jgxAdapter.getModel().getStyle(edge);
+               * style += ";endArrow=classic"; // Add an arrow at the end of the edge
+               * jgxAdapter.getModel().setStyle(edge, style);
+               * }
+               * }
+               * }
+               */
 
         } finally {
             jgxAdapter.getModel().endUpdate();
@@ -251,7 +259,7 @@ class Graph<T> {
         });
 
         // Salva a imagem como png
-        File imgFile = new File(filePath + "\\" + fileName + filePoint + ".png");
+        File imgFile = new File(graphPath + "\\" + fileName + "\\" + fileName + filePoint + ".png");
         try {
             ImageIO.write(image, "PNG", imgFile);
         } catch (IOException e) {
