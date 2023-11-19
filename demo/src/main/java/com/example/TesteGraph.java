@@ -18,8 +18,8 @@ public class TesteGraph {
         Scanner scanner = new Scanner(System.in);
         int number;
 
-        System.out.println("\nArquivos encotrados na pasta '" + folderPath + "': ");
-        ReadFiles.printFiles(fileList);
+        System.out.println("\nQuantidade de arquivos '.txt' encontrados na pasta: '" + folderPath + "': ");
+        System.out.println("- " + fileList.size());
 
         do {
             System.out.println("\nDigite: \n" +
@@ -173,7 +173,7 @@ public class TesteGraph {
 
             // Se tanto o arqivo '.csv' e '.png' já existam eles são apenas substituidos
             // Da um print no grafo e gera a imagem do grafo como png
-            
+
             graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), "_graph");
             graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), "_topics");
         }
