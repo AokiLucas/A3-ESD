@@ -77,13 +77,16 @@ public class TesteGraph {
     public static void chooseFiles(Scanner scanner, List<FileDetails> fileList, Graph<String> fullGraph,
             Graph<String> autoresGraph)
             throws IOException {
+        String commands = "\n- Digite o nome do arquivo que deseja e aperte 'enter'." +
+                "\n- Digite '.files' para vizualizar os arquivos da pasta." +
+                "\n- Digite '.lista' para vizualizar os arquivos escolhidos para gerar o Grafo." +
+                "\n- Digite '.sair' quando quiser parar e excutar o programa." +
+                "\n- Digite '.help' para exibir os comandos novamente.\n";
+
         clearPrompt();
 
         System.out.println(
-                "\n- Digite o nome do arquivo que deseja e aperte 'enter'." +
-                        "\n- Digite '.files' para vizualizar os arquivos da pasta." +
-                        "\n- Digite '.lista' para vizualizar os arquivos escolhidos para gerar o Grafo." +
-                        "\n- Digite '.sair' quando quiser parar.\n");
+                commands);
 
         String i;
         List<FileDetails> tempFileList = new ArrayList<>();
@@ -133,13 +136,17 @@ public class TesteGraph {
                     ReadFiles.printFiles(tempFileList);
                     System.out.println("");
                 }
+            }//Exibe a lista de comandos novamente
+            else if (i.equals(".help")){
+                System.out.println(commands);
             }
             // Se for diferente da palavra '.sair' e das demais ele entende que deveria ser
             // o nome de uma arquivo e que o nome está errado
             else if (!i.equals(".sair")) {
                 System.out.println("\n- Arquivo não encontrado.\n");
             }
-        } // Executa até o usuário desejar sair
+        }
+        // Executa até o usuário desejar sair
         while (!i.equals(".sair"));
 
         // Se no final a lista não for vazia vai executar a geração dos grafos dos
@@ -165,10 +172,7 @@ public class TesteGraph {
     public static void runGraph(List<FileDetails> fileList, Graph<String> fullGraph, Graph<String> autoresGraph)
             throws IOException {
         // Vai executar para cada arquivo '.txt' dentro da pasta
-        // TODO Criar uma lista para poder acessar os grafos individualmente e ver o que
-        // fazer
-        // em relacao aos autores, provavelmente uma lista co-relacionado o grafo com
-        // autor
+        // TODO Criar uma lista para poder acessar os grafos individualmente
         for (FileDetails fileDetails : fileList) {
             Graph<String> graphObject = new Graph<>();
 
@@ -209,20 +213,9 @@ public class TesteGraph {
             graphObject.printGraph(fileDetails.getFileName(), fileDetails.getGraphPath(),
                     "_topics");
 
-            fullGraph.printGraph("fullGraph", "demo\\graphs", "_graph");
-            autoresGraph.printGraph("autores", "demo\\graphs", "_autoresGraph");
         }
-    }
-
-    public static void authGraph(List<FileDetails> fileList, Graph<String> autoresGraph) throws IOException {
-        for (FileDetails fileDetails : fileList) {
-            TextDetails textDetails = TextClean.LoadText(fileDetails.getFilePath() + ".txt");
-            String[] autores = textDetails.getautores();
-
-            for (int i = 0; i < autores.length; i++) {
-
-            }
-        }
+        fullGraph.printGraph("fullGraph", "demo\\graphs", "_graph");
+        autoresGraph.printGraph("autores", "demo\\graphs", "_autoresGraph");
     }
 
     public static void clearPrompt() {

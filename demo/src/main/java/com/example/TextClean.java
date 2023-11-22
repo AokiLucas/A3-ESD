@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.text.WordUtils;
+
 import lemport.lemma.Lemmatizer;
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
@@ -54,8 +56,12 @@ public class TextClean {
         String pattern = ("((http|https)://)(www.)?[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)");
         text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
 
-        // Extract authors from the last line
+        // Separa o nome dos autores da ultima linha
         String[] autores = lastLine.split(",");
+        
+        for (int i = 0; i < autores.length; i++) {
+         autores[i] = WordUtils.capitalizeFully(autores[i].toLowerCase());   
+        }
 
         TextDetails textDetails = new TextDetails(text, autores);
 
