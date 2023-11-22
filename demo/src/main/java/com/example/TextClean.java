@@ -1,10 +1,12 @@
 package com.example;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,17 +34,32 @@ public class TextClean {
     }
 
     // Le o nosso arquivo txt
-    static String LoadText(String path) throws IOException {
+    static TextDetails LoadText(String path) throws IOException {
         Path filePath = Path.of(path);
 
-        String text = Files.readString(filePath, StandardCharsets.ISO_8859_1);
+        StringBuilder sb = new StringBuilder();
+        String lastLine = "";
 
-        text = text.toLowerCase();
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(new FileInputStream(filePath.toFile()), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line.toLowerCase()).append("\n");
+                lastLine = line;
+            }
+        }
+
+        String text = sb.toString();
         // Remover URL's do texto
         String pattern = ("((http|https)://)(www.)?[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)");
         text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
 
-        return text;
+        // Extract authors from the last line
+        String[] autores = lastLine.split(",");
+
+        TextDetails textDetails = new TextDetails(text, autores);
+
+        return textDetails;
     }
 
     // Limpeza Regex

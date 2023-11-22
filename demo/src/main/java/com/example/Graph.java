@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,7 @@ class Graph<T> {
         vertexWeights.put(vertex, 0);
     }
 
-    public void printGraph(String filePath, String fileName, String graphPath, String filePoint) throws IOException {
+    public void printGraph(String fileName, String graphPath, String filePoint) throws IOException {
         StringBuilder builder = new StringBuilder();
 
         // folderCreater(filePath);
@@ -90,39 +91,39 @@ class Graph<T> {
             List<T> mostImportant = getImportantVertices();
             List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10));
 
-            // Vertices
-            for (T vertex : top10) {
-                builder.append(vertex.toString() + " (" + vertexWeights.get(vertex) + "): ");
-                // Arestas
-                for (T node : graph.get(vertex).keySet()) {
-                    builder.append(node.toString() + " (" + graph.get(vertex).get(node) + ") ");
-
-                    csvWriter(csvFileWriter, (vertex.toString() + "," + " (" + vertexWeights.get(vertex) + ")" + ", "),
-                            (node.toString() + "," + " (" + graph.get(vertex).get(node) + ") "));
-                }
-                builder.append("\n");
-            }
+            // Gera o csv do grafo usando apenas os 10 primeiros vertices
+            csvGraphConstructor(top10, builder, csvFileWriter);
         } else if (filePoint.equals("_graph")) {
-            // Veritce
-            for (T vertex : graph.keySet()) {
-                builder.append(vertex.toString() + " (" + vertexWeights.get(vertex) + "): ");
-                // Arestas
-                for (T node : graph.get(vertex).keySet()) {
-                    builder.append(node.toString() + " (" + graph.get(vertex).get(node) + ") ");
-
-                    csvWriter(csvFileWriter, (vertex.toString() + "," + " (" + vertexWeights.get(vertex) + ")" + ", "),
-                            (node.toString() + "," + " (" + graph.get(vertex).get(node) + ") "));
-                }
-                builder.append("\n");
-
-            }
+            // Gera o csv do grafo utilizando todo o conjunto de vertices em 'graph'
+            csvGraphConstructor(graph.keySet(), builder, csvFileWriter);
+        } else if (filePoint.equals("_autoresGraph")) {
+            // Gera o csv do grafo utilizando todo o conjunto de vertices em 'graph'
+            
+            csvGraphConstructor(graph.keySet(), builder, csvFileWriter);
         }
 
         csvFileWriter.flush();
         csvFileWriter.close();
 
-        //Gera a imagem do grafo
-        visualizeGraph(filePath, fileName, graphPath, filePoint);
+        // Gera a imagem do grafo
+        visualizeGraph(fileName, graphPath, filePoint);
+    }
+
+    // Constroi o csv do grafo com base na quantidade de vertices
+    public void csvGraphConstructor(Collection<T> vertexKeySet, StringBuilder builder, FileWriter csvFileWriter) throws IOException {
+        for (T vertex : vertexKeySet) {
+            builder.append(vertex.toString()).append(" (").append(vertexWeights.get(vertex)).append("), ");
+            // Arestas
+            if (graph.containsKey(vertex)) {
+                for (T node : graph.get(vertex).keySet()) {
+                    builder.append(node.toString()).append(" (").append(graph.get(vertex).get(node)).append("), ");
+                    csvWriter(csvFileWriter, vertex.toString() + ", (" + vertexWeights.get(vertex) + "), ", node.toString() + ", (" + graph.get(vertex).get(node) + ") ");
+                }
+            } else {
+                csvWriter(csvFileWriter, vertex.toString() + ", (" + vertexWeights.get(vertex) + "), ", " , ");
+            }
+            builder.append("\n");
+        }
     }
 
     public List<T> getImportantVertices() {
@@ -167,7 +168,7 @@ class Graph<T> {
     }
 
     // Gerador do grafo
-    public void visualizeGraph(String filePath, String fileName, String graphPath, String filePoint) {
+    public void visualizeGraph(String fileName, String graphPath, String filePoint) {
         mxGraph jgxAdapter = new mxGraph();
         Object parent = jgxAdapter.getDefaultParent();
 
@@ -178,53 +179,15 @@ class Graph<T> {
                 List<T> mostImportant = getImportantVertices();
                 List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10));
 
-                Map<T, Object> vertexMap = new HashMap<>();
-                for (T vertex : top10) {
-                    // Calcula o comprimento do vertice com base no tamanho do texto
-                    String label = vertex.toString() + " (" + vertexWeights.get(vertex) + ")";
-                    double width = Math.max(80, label.length() * 10);
-                    vertexMap.put(vertex, jgxAdapter.insertVertex(parent, null, label, 20, 20, width, 30));
-                }
-                // Vertice
-                for (T source : top10) {
-                    // Arestas
-                    for (T destination : graph.get(source).keySet()) {
-                        Object edge = jgxAdapter.insertEdge(parent, null, graph.get(source).get(destination),
-                                vertexMap.get(source),
-                                vertexMap.get(destination), "labelBackgroundColor=white");
-                        String style = jgxAdapter.getModel().getStyle(edge);
-                        style += ";endArrow=classic"; // Add an arrow at the end of the edge
-                        jgxAdapter.getModel().setStyle(edge, style);
-                    }
-                }
-            } else {
+                // Gera o construtor do png do Grafo usando apenas os 10 primeiros vertices
+                pngGraphConstructor(top10, jgxAdapter, parent);
+            } else if (filePoint.equals("_graph")) {
+                // Gera o comstrutor do png do Grafo utilizando todos os vertices de 'graph'
+                // pngGraphConstructor(graph.keySet(), jgxAdapter, parent);
                 return;
-            } /*
-               * else if (filePoint.equals("_graph")) {
-               * Map<T, Object> vertexMap = new HashMap<>();
-               * for (T vertex : graph.keySet()) {
-               * // Calcula o comprimento do vertice com base no tamanho do texto
-               * String label = vertex.toString() + " (" + vertexWeights.get(vertex) + ")";
-               * double width = Math.max(80, label.length() * 10);
-               * vertexMap.put(vertex, jgxAdapter.insertVertex(parent, null, label, 20, 20,
-               * width, 30));
-               * }
-               * // Vertice
-               * for (T source : graph.keySet()) {
-               * // Arestas
-               * for (T destination : graph.get(source).keySet()) {
-               * Object edge = jgxAdapter.insertEdge(parent, null,
-               * graph.get(source).get(destination),
-               * vertexMap.get(source),
-               * vertexMap.get(destination), "labelBackgroundColor=white");
-               * String style = jgxAdapter.getModel().getStyle(edge);
-               * style += ";endArrow=classic"; // Add an arrow at the end of the edge
-               * jgxAdapter.getModel().setStyle(edge, style);
-               * }
-               * }
-               * }
-               */
-
+            } else if (filePoint.equals("_autoresGraph")) {
+                pngGraphConstructor(graph.keySet(), jgxAdapter, parent);
+            }
         } finally {
             jgxAdapter.getModel().endUpdate();
         }
@@ -264,6 +227,29 @@ class Graph<T> {
             ImageIO.write(image, "PNG", imgFile);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    // Gera o construtor do png do Grafo com base na quantidade de vertices
+    public void pngGraphConstructor(Collection<T> vertexKeySet, mxGraph jgxAdapter, Object parent) {
+        Map<T, Object> vertexMap = new HashMap<>();
+        for (T vertex : vertexKeySet) {
+            // Calcula o comprimento do vertice com base no tamanho do texto
+            String label = vertex.toString() + " (" + vertexWeights.get(vertex) + ")";
+            double width = Math.max(80, label.length() * 10);
+            vertexMap.put(vertex, jgxAdapter.insertVertex(parent, null, label, 20, 20, width, 30));
+        }
+        // Vertice
+        for (T source : vertexKeySet) {
+            // Arestas
+            for (T destination : graph.get(source).keySet()) {
+                Object edge = jgxAdapter.insertEdge(parent, null, graph.get(source).get(destination),
+                        vertexMap.get(source),
+                        vertexMap.get(destination), "labelBackgroundColor=white");
+                String style = jgxAdapter.getModel().getStyle(edge);
+                style += ";endArrow=classic"; // Add an arrow at the end of the edge
+                jgxAdapter.getModel().setStyle(edge, style);
+            }
         }
     }
 }

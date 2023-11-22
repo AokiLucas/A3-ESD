@@ -12,7 +12,8 @@ public class TesteGraph {
     public static void main(String[] args) throws IOException {
 
         // Classe grafo
-        Graph<String> graphObject = new Graph<>();
+        Graph<String> fullGraph = new Graph<>();
+        Graph<String> autoresGraph = new Graph<>();
 
         // Classe dos arquivos
         // Incializar dando a pasta onde os arquivos estão
@@ -44,7 +45,7 @@ public class TesteGraph {
                 // Vai gerar todos os grafos
                 case 2:
                     startTimer = System.nanoTime();
-                    runGraph(fileList, graphObject);
+                    runGraph(fileList, fullGraph, autoresGraph);
                     endTimer = System.nanoTime() - startTimer;
 
                     clearPrompt();
@@ -59,7 +60,7 @@ public class TesteGraph {
                 // Vai gerar os grafos dos arquivos selecionados para o mesmo
                 case 3:
                     scanner.nextLine();
-                    chooseFiles(scanner, fileList, graphObject);
+                    chooseFiles(scanner, fileList, fullGraph, autoresGraph);
                     break;
 
                 default:
@@ -73,7 +74,8 @@ public class TesteGraph {
         scanner.close();
     }
 
-    public static void chooseFiles(Scanner scanner, List<FileDetails> fileList, Graph<String> graphObject)
+    public static void chooseFiles(Scanner scanner, List<FileDetails> fileList, Graph<String> fullGraph,
+            Graph<String> autoresGraph)
             throws IOException {
         clearPrompt();
 
@@ -145,7 +147,7 @@ public class TesteGraph {
         if (!tempFileList.isEmpty()) {
 
             startTimer = System.nanoTime();
-            runGraph(tempFileList, graphObject);
+            runGraph(tempFileList, fullGraph, autoresGraph);
             endTimer = System.nanoTime() - startTimer;
 
             clearPrompt();
@@ -160,15 +162,20 @@ public class TesteGraph {
 
     }
 
-    public static void runGraph(List<FileDetails> fileList, Graph<String> graphObject) throws IOException {
+    public static void runGraph(List<FileDetails> fileList, Graph<String> fullGraph, Graph<String> autoresGraph)
+            throws IOException {
         // Vai executar para cada arquivo '.txt' dentro da pasta
         // TODO Criar uma lista para poder acessar os grafos individualmente e ver o que
         // fazer
         // em relacao aos autores, provavelmente uma lista co-relacionado o grafo com
         // autor
         for (FileDetails fileDetails : fileList) {
+            Graph<String> graphObject = new Graph<>();
+
             // Inicializa a LoadText com o arquivo
-            String text = TextClean.LoadText(fileDetails.getFilePath() + ".txt");
+            TextDetails textDetails = TextClean.LoadText(fileDetails.getFilePath() + ".txt");
+
+            String text = textDetails.getText();
 
             // Limpeza
             text = TextClean.Regex(text);
@@ -186,15 +193,35 @@ public class TesteGraph {
             // realizar o nó
             for (int i = 0; i < cleanText.length - 1; i++) {
                 graphObject.addEdge(cleanText[i], cleanText[i + 1]);
+
+                fullGraph.addEdge(cleanText[i], cleanText[i + 1]);
+            }
+
+            for (int i = 0; i < textDetails.getautores().length - 1; i++) {
+                autoresGraph.addEdge(textDetails.getautores()[i], textDetails.getautores()[i + 1]);
             }
 
             // Se tanto o arqivo '.csv' e '.png' já existam eles são apenas substituidos
             // Da um print no grafo e gera a imagem do grafo como png
 
-            graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), fileDetails.getGraphPath(),
+            graphObject.printGraph(fileDetails.getFileName(), fileDetails.getGraphPath(),
                     "_graph");
-            graphObject.printGraph(fileDetails.getFilePath(), fileDetails.getFileName(), fileDetails.getGraphPath(),
+            graphObject.printGraph(fileDetails.getFileName(), fileDetails.getGraphPath(),
                     "_topics");
+
+            fullGraph.printGraph("fullGraph", "demo\\graphs", "_graph");
+            autoresGraph.printGraph("autores", "demo\\graphs", "_autoresGraph");
+        }
+    }
+
+    public static void authGraph(List<FileDetails> fileList, Graph<String> autoresGraph) throws IOException {
+        for (FileDetails fileDetails : fileList) {
+            TextDetails textDetails = TextClean.LoadText(fileDetails.getFilePath() + ".txt");
+            String[] autores = textDetails.getautores();
+
+            for (int i = 0; i < autores.length; i++) {
+
+            }
         }
     }
 
