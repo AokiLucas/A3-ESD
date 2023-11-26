@@ -136,8 +136,8 @@ public class TesteGraph {
                     ReadFiles.printFiles(tempFileList);
                     System.out.println("");
                 }
-            }//Exibe a lista de comandos novamente
-            else if (i.equals(".help")){
+            } // Exibe a lista de comandos novamente
+            else if (i.equals(".help")) {
                 System.out.println(commands);
             }
             // Se for diferente da palavra '.sair' e das demais ele entende que deveria ser
@@ -196,13 +196,13 @@ public class TesteGraph {
             // Caso a palavra nao seja um vertice ainda vai criar o mesmo antes e depois
             // realizar o nó
             for (int i = 0; i < cleanText.length - 1; i++) {
-                graphObject.addEdge(cleanText[i], cleanText[i + 1]);
+                graphObject.addEdge(cleanText[i], cleanText[i + 1], false);
 
-                fullGraph.addEdge(cleanText[i], cleanText[i + 1]);
+                fullGraph.addEdge(cleanText[i], cleanText[i + 1], false);
             }
 
             for (int i = 0; i < textDetails.getautores().length - 1; i++) {
-                autoresGraph.addEdge(textDetails.getautores()[i], textDetails.getautores()[i + 1]);
+                autoresGraph.addEdge(textDetails.getautores()[i], textDetails.getautores()[i + 1], true);
             }
 
             // Se tanto o arqivo '.csv' e '.png' já existam eles são apenas substituidos
@@ -214,6 +214,7 @@ public class TesteGraph {
                     "_topics");
 
         }
+
         fullGraph.printGraph("fullGraph", "demo\\graphs", "_graph");
         autoresGraph.printGraph("autores", "demo\\graphs", "_autoresGraph");
     }

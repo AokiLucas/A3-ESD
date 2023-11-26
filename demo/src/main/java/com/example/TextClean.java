@@ -46,7 +46,9 @@ public class TextClean {
                 new InputStreamReader(new FileInputStream(filePath.toFile()), StandardCharsets.UTF_8))) {
             String line;
             while ((line = br.readLine()) != null) {
-                sb.append(line.toLowerCase()).append("\n");
+                if(!lastLine.equals(""))
+                    sb.append(lastLine.toLowerCase()).append("\n");
+
                 lastLine = line;
             }
         }

@@ -29,7 +29,7 @@ class Graph<T> {
     private Map<T, Integer> vertexWeights = new HashMap<>();
 
     // Adicionar Aresta
-    public void addEdge(T source, T destination) {
+    public void addEdge(T source, T destination, boolean bidirectional) {
         // Se nao existir o vertice ele ira criar
         if (!graph.containsKey(source)) {
             addVertex(source);
@@ -44,6 +44,11 @@ class Graph<T> {
         // Aumenta o peso interno da palavras
         vertexWeights.put(source, vertexWeights.get(source) + 1);
         vertexWeights.put(destination, vertexWeights.get(destination) + 1);
+
+        if (bidirectional == true) {
+            Map<T, Integer> reverseEdges = graph.get(destination);
+            reverseEdges.put(source, reverseEdges.getOrDefault(source, 0) + 1);
+        }
     }
 
     /*
@@ -115,17 +120,15 @@ class Graph<T> {
         for (T vertex : vertexKeySet) {
             builder.append(vertex.toString()).append(" (").append(vertexWeights.get(vertex)).append("), ");
             // Arestas
-            if (graph.containsKey(vertex)) {
-                for (T node : graph.get(vertex).keySet()) {
-                    builder.append(node.toString()).append(" (").append(graph.get(vertex).get(node)).append("), ");
-                    csvWriter(csvFileWriter, vertex.toString() + ", (" + vertexWeights.get(vertex) + "), ",
-                            node.toString() + ", (" + graph.get(vertex).get(node) + ") ");
-                }
-            } else {
-                csvWriter(csvFileWriter, vertex.toString() + ", (" + vertexWeights.get(vertex) + "), ", " , ");
+            for (T node : graph.get(vertex).keySet()) {
+                builder.append(node.toString()).append(" (").append(graph.get(vertex).get(node)).append("), ");
+                csvWriter(csvFileWriter, vertex.toString() + ", (" + vertexWeights.get(vertex) + "), ",
+                        node.toString() + ", (" + graph.get(vertex).get(node) + ") ");
             }
+
             builder.append("\n");
         }
+
     }
 
     public List<T> getImportantVertices() {
@@ -182,13 +185,13 @@ class Graph<T> {
                 List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10));
 
                 // Gera o construtor do png do Grafo usando apenas os 10 primeiros vertices
-                pngGraphConstructor(top10, jgxAdapter, parent, ";endArrow=classic");
+                pngGraphConstructor(top10, jgxAdapter, parent);
             } else if (filePoint.equals("_graph")) {
                 // Gera o comstrutor do png do Grafo utilizando todos os vertices de 'graph'
-                // pngGraphConstructor(graph.keySet(), jgxAdapter, parent, ";endArrow=classic");
+                // pngGraphConstructor(graph.keySet(), jgxAdapter, parent);
                 return;
             } else if (filePoint.equals("_autoresGraph")) {
-                pngGraphConstructor(graph.keySet(), jgxAdapter, parent, ";endArrow=NONE");
+                pngGraphConstructor(graph.keySet(), jgxAdapter, parent);
             }
         } finally {
             jgxAdapter.getModel().endUpdate();
@@ -223,7 +226,7 @@ class Graph<T> {
     }
 
     // Gera o construtor do png do Grafo com base na quantidade de vertices
-    public void pngGraphConstructor(Collection<T> vertexKeySet, mxGraph jgxAdapter, Object parent, String direction) {
+    public void pngGraphConstructor(Collection<T> vertexKeySet, mxGraph jgxAdapter, Object parent) {
         Map<T, Object> vertexMap = new HashMap<>();
         for (T vertex : vertexKeySet) {
             // Calcula o comprimento do vertice com base no tamanho do texto
@@ -239,7 +242,7 @@ class Graph<T> {
                         vertexMap.get(source),
                         vertexMap.get(destination), "labelBackgroundColor=white");
                 String style = jgxAdapter.getModel().getStyle(edge);
-                style += direction;
+                style += ";endArrow=classic";
                 jgxAdapter.getModel().setStyle(edge, style);
             }
         }
