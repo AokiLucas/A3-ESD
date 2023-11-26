@@ -1,4 +1,4 @@
-package com.example;
+package com.example.Class;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,9 +6,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.Objects.FileObject;
+
 public class ReadFiles {
-    public static List<FileDetails> readTxtFiles(String folderPath) {
-        List<FileDetails> fileList = new ArrayList<>();
+    public static List<FileObject> readTxtFiles(String folderPath) {
+        List<FileObject> fileList = new ArrayList<>();
         try {
 
             // Percorre a pasta e filtra por todos os arquivos .txt
@@ -29,7 +31,7 @@ public class ReadFiles {
                                     filePathWithoutExtension.lastIndexOf("."));
 
                         fileList.add(
-                                new FileDetails(fileNameWithoutExtension, filePathWithoutExtension, "demo\\graphs"));
+                                new FileObject(fileNameWithoutExtension, filePathWithoutExtension, "demo\\graphs"));
                     });
 
             // Vai ordenar em ordem crescente com base no nome dos arquivos
@@ -46,8 +48,9 @@ public class ReadFiles {
         return fileList;
     }
 
-    public static void printFiles(List<FileDetails> fileList) {
-        for (FileDetails fileDetails : fileList) {
+    //Da um print nos arquivos existentes dentro da pasta
+    public static void printFiles(List<FileObject> fileList) {
+        for (FileObject fileDetails : fileList) {
             System.out.println(fileDetails.getFileName());
         }
     }

@@ -1,4 +1,4 @@
-package com.example;
+package com.example.Class;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -37,6 +37,7 @@ class Graph<T> {
         if (!graph.containsKey(destination)) {
             addVertex(destination);
         }
+
         // Lista das Arestas
         Map<T, Integer> edges = graph.get(source);
         edges.put(destination, edges.getOrDefault(destination, 0) + 1);
@@ -45,6 +46,7 @@ class Graph<T> {
         vertexWeights.put(source, vertexWeights.get(source) + 1);
         vertexWeights.put(destination, vertexWeights.get(destination) + 1);
 
+        // Torna o grafo bidirecional
         if (bidirectional == true) {
             Map<T, Integer> reverseEdges = graph.get(destination);
             reverseEdges.put(source, reverseEdges.getOrDefault(source, 0) + 1);
@@ -83,7 +85,6 @@ class Graph<T> {
     }
 
     public void printGraph(String fileName, String graphPath, String filePoint) throws IOException {
-        StringBuilder builder = new StringBuilder();
 
         // folderCreater(filePath);
         folderCreater(graphPath + "\\" + fileName);
@@ -97,14 +98,14 @@ class Graph<T> {
             List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10));
 
             // Gera o csv do grafo usando apenas os 10 primeiros vertices
-            csvGraphConstructor(top10, builder, csvFileWriter);
+            csvGraphConstructor(top10, csvFileWriter);
         } else if (filePoint.equals("_graph")) {
             // Gera o csv do grafo utilizando todo o conjunto de vertices em 'graph'
-            csvGraphConstructor(graph.keySet(), builder, csvFileWriter);
+            csvGraphConstructor(graph.keySet(), csvFileWriter);
         } else if (filePoint.equals("_autoresGraph")) {
             // Gera o csv do grafo utilizando todo o conjunto de vertices em 'graph'
 
-            csvGraphConstructor(graph.keySet(), builder, csvFileWriter);
+            csvGraphConstructor(graph.keySet(), csvFileWriter);
         }
 
         csvFileWriter.flush();
@@ -115,18 +116,16 @@ class Graph<T> {
     }
 
     // Constroi o csv do grafo com base na quantidade de vertices
-    public void csvGraphConstructor(Collection<T> vertexKeySet, StringBuilder builder, FileWriter csvFileWriter)
+    public void csvGraphConstructor(Collection<T> vertexKeySet, FileWriter csvFileWriter)
             throws IOException {
+        // Vertice
         for (T vertex : vertexKeySet) {
-            builder.append(vertex.toString()).append(" (").append(vertexWeights.get(vertex)).append("), ");
             // Arestas
             for (T node : graph.get(vertex).keySet()) {
-                builder.append(node.toString()).append(" (").append(graph.get(vertex).get(node)).append("), ");
+                // Adiciona nossos vertices, arestas e seus pesos ao '.csv'
                 csvWriter(csvFileWriter, vertex.toString() + ", (" + vertexWeights.get(vertex) + "), ",
                         node.toString() + ", (" + graph.get(vertex).get(node) + ") ");
             }
-
-            builder.append("\n");
         }
 
     }

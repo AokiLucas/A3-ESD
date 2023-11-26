@@ -1,11 +1,14 @@
-package com.example;
+package com.example.Class;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class TesteGraph {
+import com.example.Objects.FileObject;
+import com.example.Objects.TextObject;
+
+public class Main {
     static long startTimer;
     static long endTimer;
 
@@ -18,63 +21,82 @@ public class TesteGraph {
         // Classe dos arquivos
         // Incializar dando a pasta onde os arquivos estão
         String folderPath = "demo\\resumes";
-        List<FileDetails> fileList = ReadFiles.readTxtFiles(folderPath);
+        List<FileObject> fileList = ReadFiles.readTxtFiles(folderPath);
 
         Scanner scanner = new Scanner(System.in);
-        int number;
+        int number = -1;
+        String commands = ("\nDigite: \n" +
+                "1 - Exibir lista de arquivos na pasta.\n" +
+                "2 - Para gerar o grafo de todos os arquivos.\n" +
+                "3 - Para escolher os arquivos a gerar o grafo.\n" +
+                "9 - Exibir as opções novamente.\n" +
+                "0 - Para sair. \n");
 
         System.out.println("\nQuantidade de arquivos '.txt' encontrados na pasta: '" + folderPath + "': ");
         System.out.println("- " + fileList.size());
 
+        System.out.println(commands);
+
         do {
-            System.out.println("\nDigite: \n" +
-                    "1 - Exibir lista de arquivos na pasta.\n" +
-                    "2 - Para gerar o grafo de todos os arquivos.\n" +
-                    "3 - Para escolher os arquivos a gerar o grafo.\n" +
-                    "0 - Para sair. \n");
+            try {
 
-            number = scanner.nextInt();
+                number = scanner.nextInt();
 
-            switch (number) {
-                // Print de todos os arquivos '.txt' dentro da pasta
-                case 1:
-                    System.out.println("\nArquivos encotrados na pasta '" + folderPath + "': ");
-                    ReadFiles.printFiles(fileList);
-                    break;
+                switch (number) {
+                    // Print de todos os arquivos '.txt' dentro da pasta
+                    case 1:
 
-                // Vai gerar todos os grafos
-                case 2:
-                    startTimer = System.nanoTime();
-                    runGraph(fileList, fullGraph, autoresGraph);
-                    endTimer = System.nanoTime() - startTimer;
+                        System.out.println(
+                                "\nQuantidade de arquivos '.txt' encontrados na pasta: '" + folderPath + "': ");
+                        System.out.println("- " + fileList.size() + "\n");
 
-                    clearPrompt();
-                    System.out
-                            .println(
-                                    "\nTodos os grafos foram gerados em uma pasta com o nome do próprio arquivo '.txt'");
+                        ReadFiles.printFiles(fileList);
+                        break;
 
-                    System.out.println(endTimer / 1000000000 + "s");
+                    // Vai gerar todos os grafos
+                    case 2:
+                        startTimer = System.nanoTime();
+                        runGraph(fileList, fullGraph, autoresGraph);
+                        endTimer = System.nanoTime() - startTimer;
 
-                    break;
+                        clearPrompt();
+                        System.out
+                                .println(
+                                        "\nTodos os grafos foram gerados em uma pasta com o nome do próprio arquivo '.txt'");
 
-                // Vai gerar os grafos dos arquivos selecionados para o mesmo
-                case 3:
-                    scanner.nextLine();
-                    chooseFiles(scanner, fileList, fullGraph, autoresGraph);
-                    break;
+                        System.out.println(endTimer / 1000000000 + "s");
 
-                default:
-                    if (number != 0) {
-                        System.out.println("/nDigite uma opção válida./n");
-                    }
-                    break;
+                        break;
+
+                    // Vai gerar os grafos dos arquivos selecionados para o mesmo
+                    case 3:
+                        scanner.nextLine();
+                        chooseFiles(scanner, fileList, fullGraph, autoresGraph);
+                        break;
+
+                    // Print nos comandos novamente
+                    case 9:
+                        clearPrompt();
+                        System.out.println(commands);
+                        break;
+
+                    default:
+                        if (number != (0)) {
+                            System.out.println("\nDigite uma opção válida.\n");
+                        }
+                        break;
+                }
+            } catch (java.util.InputMismatchException e) {
+                clearPrompt();
+                System.out.println("\nDigite um caractere válido.");
+                scanner.nextLine(); // discard the invalid input
             }
         } while (number != 0);
 
         scanner.close();
     }
 
-    public static void chooseFiles(Scanner scanner, List<FileDetails> fileList, Graph<String> fullGraph,
+    public static void chooseFiles(Scanner scanner, List<FileObject> fileList, Graph<String> fullGraph,
             Graph<String> autoresGraph)
             throws IOException {
         String commands = "\n- Digite o nome do arquivo que deseja e aperte 'enter'." +
@@ -85,18 +107,21 @@ public class TesteGraph {
 
         clearPrompt();
 
-        System.out.println(
-                commands);
+        System.out.println(commands);
 
+        // Variavel que recebe o nosso scanner
         String i;
-        List<FileDetails> tempFileList = new ArrayList<>();
+
+        List<FileObject> tempFileList = new ArrayList<>();
+
         do {
             i = scanner.nextLine().toLowerCase();
-            FileDetails foundFile = null;
+
+            FileObject foundFile = null;
 
             // Retorna o nosso arquivo desejado quando encontrado dentro da lista de
             // elementos da pasta
-            for (FileDetails fileDetails : fileList) {
+            for (FileObject fileDetails : fileList) {
                 if (fileDetails.getFileName().equals(i)) {
                     foundFile = fileDetails;
                     break;
@@ -109,7 +134,7 @@ public class TesteGraph {
 
                 // Procura dentro da lista temporaria se o arquivo ja foi adicionado antes ou
                 // não
-                for (FileDetails tempFileDetail : tempFileList) {
+                for (FileObject tempFileDetail : tempFileList) {
                     if (tempFileDetail.getFileName().equals(i)) {
                         alreadyExists = true;
                         System.out.println("\n- O arquivo já foi adicionado.\n");
@@ -158,6 +183,7 @@ public class TesteGraph {
             endTimer = System.nanoTime() - startTimer;
 
             clearPrompt();
+
             System.out.println("\n- Grafo(s) gerado com sucesso.");
 
             System.out.println(endTimer / 1000000000 + "s");
@@ -169,15 +195,16 @@ public class TesteGraph {
 
     }
 
-    public static void runGraph(List<FileDetails> fileList, Graph<String> fullGraph, Graph<String> autoresGraph)
+    public static void runGraph(List<FileObject> fileList, Graph<String> fullGraph, Graph<String> autoresGraph)
             throws IOException {
         // Vai executar para cada arquivo '.txt' dentro da pasta
-        // TODO Criar uma lista para poder acessar os grafos individualmente
-        for (FileDetails fileDetails : fileList) {
+        // TODO Criar uma lista para poder acessar os grafos individualmente para fazer
+        // as comparações
+        for (FileObject fileDetails : fileList) {
             Graph<String> graphObject = new Graph<>();
 
             // Inicializa a LoadText com o arquivo
-            TextDetails textDetails = TextClean.LoadText(fileDetails.getFilePath() + ".txt");
+            TextObject textDetails = TextClean.LoadText(fileDetails.getFilePath() + ".txt");
 
             String text = textDetails.getText();
 
@@ -201,6 +228,7 @@ public class TesteGraph {
                 fullGraph.addEdge(cleanText[i], cleanText[i + 1], false);
             }
 
+            // Vai fazer o mesmo e adicionar os autores, mas como um grafo bidirecional
             for (int i = 0; i < textDetails.getautores().length - 1; i++) {
                 autoresGraph.addEdge(textDetails.getautores()[i], textDetails.getautores()[i + 1], true);
             }
@@ -215,10 +243,13 @@ public class TesteGraph {
 
         }
 
+        // Apos executar todos os grafos na lista vai gerar o grafo completo com todos
+        // os dados e o grafo dos autores
         fullGraph.printGraph("fullGraph", "demo\\graphs", "_graph");
         autoresGraph.printGraph("autores", "demo\\graphs", "_autoresGraph");
     }
 
+    // Limpa o console
     public static void clearPrompt() {
         System.out.print("\033[H\033[2J");
         System.out.flush();

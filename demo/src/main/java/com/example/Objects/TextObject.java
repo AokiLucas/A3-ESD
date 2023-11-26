@@ -1,10 +1,10 @@
-package com.example;
+package com.example.Objects;
 
-public class TextDetails {
+public class TextObject {
     private String text;
     private String[] autores;
 
-public TextDetails(String text, String[] autores){
+public TextObject(String text, String[] autores){
     this.text = text;
     this.autores = autores;
 }

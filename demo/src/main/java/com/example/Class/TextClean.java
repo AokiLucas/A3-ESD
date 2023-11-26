@@ -1,4 +1,4 @@
-package com.example;
+package com.example.Class;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.text.WordUtils;
 
+import com.example.Objects.TextObject;
+
 import lemport.lemma.Lemmatizer;
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
@@ -36,12 +38,13 @@ public class TextClean {
     }
 
     // Le o nosso arquivo txt
-    static TextDetails LoadText(String path) throws IOException {
+    static TextObject LoadText(String path) throws IOException {
         Path filePath = Path.of(path);
 
         StringBuilder sb = new StringBuilder();
         String lastLine = "";
 
+        //Le linha por linha do arquivo '.txt' e separa a última linha que é onde está o nome dos autores
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(new FileInputStream(filePath.toFile()), StandardCharsets.UTF_8))) {
             String line;
@@ -54,6 +57,7 @@ public class TextClean {
         }
 
         String text = sb.toString();
+
         // Remover URL's do texto
         String pattern = ("((http|https)://)(www.)?[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)");
         text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
@@ -61,11 +65,13 @@ public class TextClean {
         // Separa o nome dos autores da ultima linha
         String[] autores = lastLine.split(",");
         
+        //Formata o nome dos autores utilizando uma biblioteca
         for (int i = 0; i < autores.length; i++) {
          autores[i] = WordUtils.capitalizeFully(autores[i].toLowerCase());   
         }
 
-        TextDetails textDetails = new TextDetails(text, autores);
+        //Salva o nome dos autores no objeto
+        TextObject textDetails = new TextObject(text, autores);
 
         return textDetails;
     }

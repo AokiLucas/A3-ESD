@@ -1,11 +1,11 @@
-package com.example;
+package com.example.Objects;
 
-public class FileDetails {
+public class FileObject {
     private String fileName;
     private String filePath;
     private String graphPath;
 
-    public FileDetails(String fileName, String filePath, String graphPath) {
+    public FileObject(String fileName, String filePath, String graphPath) {
         this.fileName = fileName;
         this.filePath = filePath;
         this.graphPath = graphPath;
