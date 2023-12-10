@@ -14,7 +14,7 @@ public class ReadFiles {
         try {
 
             // Percorre a pasta e filtra por todos os arquivos .txt
-            Files.walk(Paths.get(folderPath))
+            Files.walk(Paths.get(folderPath)) // O(n)
                     .filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".txt"))
                     .forEach(p -> {
@@ -32,14 +32,14 @@ public class ReadFiles {
 
                         fileList.add(
                                 new FileObject(fileNameWithoutExtension, filePathWithoutExtension, "demo\\graphs"));
-                    });
+                    }); // O(n)
 
             // Vai ordenar em ordem crescente com base no nome dos arquivos
             fileList.sort((fd1, fd2) -> {
                 int num1 = Integer.parseInt(fd1.getFileName().replaceAll("\\D+", ""));
                 int num2 = Integer.parseInt(fd2.getFileName().replaceAll("\\D+", ""));
                 return Integer.compare(num1, num2);
-            });
+            }); // O(n logn)
 
             return fileList;
         } catch (IOException e) {
@@ -48,10 +48,10 @@ public class ReadFiles {
         return fileList;
     }
 
-    //Da um print nos arquivos existentes dentro da pasta
+    // Da um print nos arquivos existentes dentro da pasta
     public static void printFiles(List<FileObject> fileList) {
         for (FileObject fileDetails : fileList) {
             System.out.println(fileDetails.getFileName());
-        }
+        } // O(n)
     }
 }

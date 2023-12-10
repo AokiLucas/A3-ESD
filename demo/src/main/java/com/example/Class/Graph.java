@@ -51,7 +51,7 @@ class Graph<T> {
             Map<T, Integer> reverseEdges = graph.get(destination);
             reverseEdges.put(source, reverseEdges.getOrDefault(source, 0) + 1);
         }
-    }
+    } // O(1)
 
     /*
      * public void hasVertex(T vertex) {
@@ -82,30 +82,30 @@ class Graph<T> {
     private void addVertex(T vertex) {
         graph.put(vertex, new HashMap<>());
         vertexWeights.put(vertex, 0);
-    }
+    } // O(1)
 
     public void printGraph(String fileName, String graphPath, String filePoint) throws IOException {
 
         // folderCreater(filePath);
-        folderCreater(graphPath + "\\" + fileName);
+        folderCreater(graphPath + "\\" + fileName); // O(1)
 
         FileWriter csvFileWriter = new FileWriter(graphPath + "\\" + fileName + "\\" + fileName + filePoint + ".csv");
         csvFileWriter.append("Vertice, peso (V), Aresta, peso (A)\n");
 
         if (filePoint.equals("_topics")) {
             // Pega os 10 primeiros vertices
-            List<T> mostImportant = getImportantVertices();
-            List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10));
+            List<T> mostImportant = getImportantVertices(); // O(nlogn)
+            List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10)); // O(m)
 
             // Gera o csv do grafo usando apenas os 10 primeiros vertices
-            csvGraphConstructor(top10, csvFileWriter);
+            csvGraphConstructor(top10, csvFileWriter); // O(m)
         } else if (filePoint.equals("_graph")) {
             // Gera o csv do grafo utilizando todo o conjunto de vertices em 'graph'
-            csvGraphConstructor(graph.keySet(), csvFileWriter);
+            csvGraphConstructor(graph.keySet(), csvFileWriter); // O(n)
         } else if (filePoint.equals("_autoresGraph")) {
             // Gera o csv do grafo utilizando todo o conjunto de vertices em 'graph'
 
-            csvGraphConstructor(graph.keySet(), csvFileWriter);
+            csvGraphConstructor(graph.keySet(), csvFileWriter); // O(n)
         }
 
         csvFileWriter.flush();
@@ -113,42 +113,47 @@ class Graph<T> {
 
         // Gera a imagem do grafo
         visualizeGraph(fileName, graphPath, filePoint);
-    }
+    }/*
+      * Dependendo de filePoint a complexidade vai variar
+      * '_topics': O(nlogn + m)
+      * as outras serão: O(n)
+      */
 
     // Constroi o csv do grafo com base na quantidade de vertices
     public void csvGraphConstructor(Collection<T> vertexKeySet, FileWriter csvFileWriter)
             throws IOException {
         // Vertice
-        for (T vertex : vertexKeySet) {
+        for (T vertex : vertexKeySet) { // O(n)
             // Arestas
-            for (T node : graph.get(vertex).keySet()) {
+            for (T node : graph.get(vertex).keySet()) { // O(m)
                 // Adiciona nossos vertices, arestas e seus pesos ao '.csv'
                 csvWriter(csvFileWriter, vertex.toString() + ", (" + vertexWeights.get(vertex) + "), ",
                         node.toString() + ", (" + graph.get(vertex).get(node) + ") ");
             }
         }
-
-    }
+    } // O(n * m)
 
     public List<T> getImportantVertices() {
         // Cria um mapa que salva os valores dos scores
         Map<T, Integer> scores = new HashMap<>();
 
         // Calcula o score para cada vertice
-        for (T vertex : graph.keySet()) {
+        for (T vertex : graph.keySet()) { // O(n)
             int score = vertexWeights.get(vertex);
-            for (int edgeWeight : graph.get(vertex).values()) {
+            for (int edgeWeight : graph.get(vertex).values()) { // O(m)
                 score += edgeWeight;
             }
             scores.put(vertex, score);
-        }
+        } // O(n * m)
 
         // Ordena os vertices do maior para o menor com base nos scores
         List<T> vertices = new ArrayList<>(scores.keySet());
-        vertices.sort((v1, v2) -> scores.get(v2) - scores.get(v1));
+        vertices.sort((v1, v2) -> scores.get(v2) - scores.get(v1)); // O(nlogn)
 
         return vertices;
-    }
+    } // O(n * m) + O(nlogn)
+      // Dependendo dequal for maior é o que será considerado dominate
+      // para continuação será usado O(nlogn)
 
     public void folderCreater(String newDirPath) {
         // Cria uma pasta utilizando o path name do arquivo '.txt'
@@ -160,7 +165,7 @@ class Graph<T> {
                 e.printStackTrace();
             }
         }
-    }
+    } // O(1)
 
     // Gerador de arquivo csv com o grafo
     public void csvWriter(FileWriter csvWriter, String vertex, String node) {
@@ -169,7 +174,7 @@ class Graph<T> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    } // O(1)
 
     // Gerador do grafo
     public void visualizeGraph(String fileName, String graphPath, String filePoint) {
@@ -180,17 +185,17 @@ class Graph<T> {
         try {
             if (filePoint.equals("_topics")) {
                 // Pega os 10 primeiros vertices
-                List<T> mostImportant = getImportantVertices();
-                List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10));
+                List<T> mostImportant = getImportantVertices(); // O(nlogn)
+                List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10)); // O(m)
 
                 // Gera o construtor do png do Grafo usando apenas os 10 primeiros vertices
-                pngGraphConstructor(top10, jgxAdapter, parent);
+                pngGraphConstructor(top10, jgxAdapter, parent); // O(m * p)
             } else if (filePoint.equals("_graph")) {
                 // Gera o comstrutor do png do Grafo utilizando todos os vertices de 'graph'
-                // pngGraphConstructor(graph.keySet(), jgxAdapter, parent);
+                // pngGraphConstructor(graph.keySet(), jgxAdapter, parent); // O(n * m)
                 return;
             } else if (filePoint.equals("_autoresGraph")) {
-                pngGraphConstructor(graph.keySet(), jgxAdapter, parent);
+                pngGraphConstructor(graph.keySet(), jgxAdapter, parent); // O(n * m)
             }
         } finally {
             jgxAdapter.getModel().endUpdate();
@@ -203,6 +208,7 @@ class Graph<T> {
         // Cria um imagem do grafo
         BufferedImage image = new BufferedImage((int) jgxAdapter.getGraphBounds().getWidth(),
                 (int) jgxAdapter.getGraphBounds().getHeight(), BufferedImage.TYPE_INT_RGB);
+
         Graphics2D graphics = image.createGraphics();
         graphics.setColor(Color.white);
         graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
@@ -222,21 +228,25 @@ class Graph<T> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }/*
+      * Dependendo de filePoint a complexidade vai variar
+      * '_topics': O(nlogn + m + m * p)
+      * as outras serão: O(n * m)
+      */
 
     // Gera o construtor do png do Grafo com base na quantidade de vertices
     public void pngGraphConstructor(Collection<T> vertexKeySet, mxGraph jgxAdapter, Object parent) {
         Map<T, Object> vertexMap = new HashMap<>();
-        for (T vertex : vertexKeySet) {
+        for (T vertex : vertexKeySet) { // O(n)
             // Calcula o comprimento do vertice com base no tamanho do texto
             String label = vertex.toString() + " (" + vertexWeights.get(vertex) + ")";
             double width = Math.max(80, label.length() * 10);
             vertexMap.put(vertex, jgxAdapter.insertVertex(parent, null, label, 20, 20, width, 30));
         }
         // Vertice
-        for (T source : vertexKeySet) {
+        for (T source : vertexKeySet) { // O(n)
             // Arestas
-            for (T destination : graph.get(source).keySet()) {
+            for (T destination : graph.get(source).keySet()) { // O(m)
                 Object edge = jgxAdapter.insertEdge(parent, null, graph.get(source).get(destination),
                         vertexMap.get(source),
                         vertexMap.get(destination), "labelBackgroundColor=white");
@@ -245,5 +255,5 @@ class Graph<T> {
                 jgxAdapter.getModel().setStyle(edge, style);
             }
         }
-    }
+    } // O(n * m)
 }

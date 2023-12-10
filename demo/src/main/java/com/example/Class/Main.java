@@ -37,7 +37,7 @@ public class Main {
 
         System.out.println(commands);
 
-        do {
+        do { // O(n)
             try {
 
                 number = scanner.nextInt();
@@ -50,8 +50,9 @@ public class Main {
                                 "\nQuantidade de arquivos '.txt' encontrados na pasta: '" + folderPath + "': ");
                         System.out.println("- " + fileList.size() + "\n");
 
-                        ReadFiles.printFiles(fileList);
+                        ReadFiles.printFiles(fileList); // O(n)
                         break;
+                    // O(n)
 
                     // Vai gerar todos os grafos
                     case 2:
@@ -67,18 +68,26 @@ public class Main {
                         System.out.println(endTimer / 1000000000 + "s");
 
                         break;
+                    // O(n + mlogm + m^2 + q + r)
 
                     // Vai gerar os grafos dos arquivos selecionados para o mesmo
                     case 3:
                         scanner.nextLine();
                         chooseFiles(scanner, fileList, fullGraph, autoresGraph);
                         break;
+                    /*
+                     * Se a lista estiver vazia a complexidade será de O(1),
+                     * já se possuir valores será de O(n + mlogm + m^2 + p + q + r) por conta da
+                     * geração
+                     * dos grafos
+                     */
 
                     // Print nos comandos novamente
                     case 9:
                         clearPrompt();
                         System.out.println(commands);
                         break;
+                    // O(1)
 
                     default:
                         if (number != (0)) {
@@ -89,12 +98,15 @@ public class Main {
             } catch (java.util.InputMismatchException e) {
                 clearPrompt();
                 System.out.println("\nDigite um caractere válido.");
-                scanner.nextLine(); // discard the invalid input
+                scanner.nextLine();
             }
-        } while (number != 0);
+        } while (number != 0); // O(n)
 
         scanner.close();
-    }
+    } /*
+       * Dependendo de cada caso o programa toma complexidades diversar, mas em sua
+       * maioria ele vai ser O(n + mlogm + m^2 + q + r)
+       */
 
     public static void chooseFiles(Scanner scanner, List<FileObject> fileList, Graph<String> fullGraph,
             Graph<String> autoresGraph)
@@ -114,19 +126,19 @@ public class Main {
 
         List<FileObject> tempFileList = new ArrayList<>();
 
-        do {
+        do { // O(n)
             i = scanner.nextLine().toLowerCase();
 
             FileObject foundFile = null;
 
             // Retorna o nosso arquivo desejado quando encontrado dentro da lista de
             // elementos da pasta
-            for (FileObject fileDetails : fileList) {
+            for (FileObject fileDetails : fileList) { // O(m)
                 if (fileDetails.getFileName().equals(i)) {
                     foundFile = fileDetails;
                     break;
                 }
-            }
+            } // O(m)
 
             // Se existe o arquivo
             if (foundFile != null) {
@@ -134,7 +146,7 @@ public class Main {
 
                 // Procura dentro da lista temporaria se o arquivo ja foi adicionado antes ou
                 // não
-                for (FileObject tempFileDetail : tempFileList) {
+                for (FileObject tempFileDetail : tempFileList) { // O(p)
                     if (tempFileDetail.getFileName().equals(i)) {
                         alreadyExists = true;
                         System.out.println("\n- O arquivo já foi adicionado.\n");
@@ -150,7 +162,7 @@ public class Main {
             } // Vai mostrar todos os arquivos da pasta
             else if (i.equals(".files")) {
                 System.out.println("\nArquivos encotrados: ");
-                ReadFiles.printFiles(fileList);
+                ReadFiles.printFiles(fileList); // O(m)
                 System.out.println("");
             } // Vai mostrar todos os elementos na lista temporaria caso ja tenham algum
             else if (i.equals(".lista")) {
@@ -158,7 +170,7 @@ public class Main {
                     System.out.println("\n- A lista ainda está vazia no momento.\n");
                 } else {
                     System.out.println("\nArquivos na lista: ");
-                    ReadFiles.printFiles(tempFileList);
+                    ReadFiles.printFiles(tempFileList); // O(p)
                     System.out.println("");
                 }
             } // Exibe a lista de comandos novamente
@@ -172,14 +184,14 @@ public class Main {
             }
         }
         // Executa até o usuário desejar sair
-        while (!i.equals(".sair"));
+        while (!i.equals(".sair")); // O(n + m + p)
 
         // Se no final a lista não for vazia vai executar a geração dos grafos dos
         // elementos desejados
         if (!tempFileList.isEmpty()) {
 
             startTimer = System.nanoTime();
-            runGraph(tempFileList, fullGraph, autoresGraph);
+            runGraph(tempFileList, fullGraph, autoresGraph); // O(n + mlogm + m^2 + q + r)
             endTimer = System.nanoTime() - startTimer;
 
             clearPrompt();
@@ -190,33 +202,37 @@ public class Main {
 
         } // Só limpa o console e volta para o menu inicial
         else {
-            clearPrompt();
+            clearPrompt(); // O(1)
         }
-
-    }
+    }/*
+      * Se a lista estiver vazia a complexidade será de O(1),
+      * já se possuir valores será de O(n + mlogm + m^2 + p + q + r) por conta da
+      * geração
+      * dos grafos
+      */
 
     public static void runGraph(List<FileObject> fileList, Graph<String> fullGraph, Graph<String> autoresGraph)
             throws IOException {
         // Vai executar para cada arquivo '.txt' dentro da pasta
         // TODO Criar uma lista para poder acessar os grafos individualmente para fazer
         // as comparações
-        for (FileObject fileDetails : fileList) {
+        for (FileObject fileDetails : fileList) { // O(n)
             Graph<String> graphObject = new Graph<>();
 
             // Inicializa a LoadText com o arquivo
-            TextObject textDetails = TextClean.LoadText(fileDetails.getFilePath() + ".txt");
+            TextObject textDetails = TextClean.LoadText(fileDetails.getFilePath() + ".txt"); // O(m)
 
             String text = textDetails.getText();
 
             // Limpeza
-            text = TextClean.Regex(text);
-            text = TextClean.StopWords(text);
+            text = TextClean.Regex(text); // O(m)
+            text = TextClean.StopWords(text); // O(m * p)
 
             // Tokenizacao
-            String[] tokens = TextClean.Tokenizacao(text);
+            String[] tokens = TextClean.Tokenizacao(text); // O(m)
 
             // Texto ja limpo e lematizado
-            String[] cleanText = TextClean.Lematizacao(TextClean.Tokenizacao(text), TextClean.POSTagger(tokens));
+            String[] cleanText = TextClean.Lematizacao(tokens, TextClean.POSTagger(tokens) /* O(m) */); // O(m + q)
 
             // Vai adicionar a palavra atual a proxima com uma aresta e aumentar seu peso
             // caso ja exista
@@ -226,32 +242,33 @@ public class Main {
                 graphObject.addEdge(cleanText[i], cleanText[i + 1], false);
 
                 fullGraph.addEdge(cleanText[i], cleanText[i + 1], false);
-            }
+            } // O(m + q)
 
             // Vai fazer o mesmo e adicionar os autores, mas como um grafo bidirecional
             for (int i = 0; i < textDetails.getautores().length - 1; i++) {
                 autoresGraph.addEdge(textDetails.getautores()[i], textDetails.getautores()[i + 1], true);
-            }
+            } // O(m)
 
             // Se tanto o arqivo '.csv' e '.png' já existam eles são apenas substituidos
             // Da um print no grafo e gera a imagem do grafo como png
 
             graphObject.printGraph(fileDetails.getFileName(), fileDetails.getGraphPath(),
-                    "_graph");
-            graphObject.printGraph(fileDetails.getFileName(), fileDetails.getGraphPath(),
-                    "_topics");
+                    "_graph"); // O(m)
 
-        }
+            graphObject.printGraph(fileDetails.getFileName(), fileDetails.getGraphPath(),
+                    "_topics"); // O(mlogm + r)
+
+        } // O(n + mlogm + m^2 + q + r)
 
         // Apos executar todos os grafos na lista vai gerar o grafo completo com todos
         // os dados e o grafo dos autores
-        fullGraph.printGraph("fullGraph", "demo\\graphs", "_graph");
-        autoresGraph.printGraph("autores", "demo\\graphs", "_autoresGraph");
-    }
+        fullGraph.printGraph("fullGraph", "demo\\graphs", "_graph"); // O(n)
+        autoresGraph.printGraph("autores", "demo\\graphs", "_autoresGraph");// O(n)
+    } // O(n + mlogm + m^2 + q + r)
 
     // Limpa o console
     public static void clearPrompt() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
-    }
+    } // O(1)
 }

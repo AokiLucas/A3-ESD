@@ -44,37 +44,38 @@ public class TextClean {
         StringBuilder sb = new StringBuilder();
         String lastLine = "";
 
-        //Le linha por linha do arquivo '.txt' e separa a última linha que é onde está o nome dos autores
+        // Le linha por linha do arquivo '.txt' e separa a última linha que é onde está
+        // o nome dos autores
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(new FileInputStream(filePath.toFile()), StandardCharsets.UTF_8))) {
             String line;
-            while ((line = br.readLine()) != null) {
-                if(!lastLine.equals(""))
-                    sb.append(lastLine.toLowerCase()).append("\n");
+            while ((line = br.readLine()) != null) { // O(n)
+                if (!lastLine.equals(""))
+                    sb.append(lastLine.toLowerCase()).append("\n"); // O(n)
 
                 lastLine = line;
             }
-        }
+        } //O(n)
 
-        String text = sb.toString();
+        String text = sb.toString(); // O(n)
 
         // Remover URL's do texto
         String pattern = ("((http|https)://)(www.)?[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)");
-        text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
+        text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll(""); // O(n)
 
         // Separa o nome dos autores da ultima linha
-        String[] autores = lastLine.split(",");
-        
-        //Formata o nome dos autores utilizando uma biblioteca
-        for (int i = 0; i < autores.length; i++) {
-         autores[i] = WordUtils.capitalizeFully(autores[i].toLowerCase());   
+        String[] autores = lastLine.split(","); // O(m)
+
+        // Formata o nome dos autores utilizando uma biblioteca
+        for (int i = 0; i < autores.length; i++) { // O(p)
+            autores[i] = WordUtils.capitalizeFully(autores[i].toLowerCase());
         }
 
-        //Salva o nome dos autores no objeto
+        // Salva o nome dos autores no objeto
         TextObject textDetails = new TextObject(text, autores);
 
         return textDetails;
-    }
+    } // O(n) por conta do tamanho do texto que é o termo dominante
 
     // Limpeza Regex
     static String Regex(String text) {
@@ -83,14 +84,14 @@ public class TextClean {
 
         // Tira pontuações menos "." para ser possível fazer a separação por frase
         pattern = "([\\p{P}\\p{S}&&[^-]])";
-        text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
+        text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll(""); // O(n)
 
         // Tira digitos numericos
         pattern = "\\d";
-        text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll("");
+        text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll(""); // O(n)
 
         return text;
-    }
+    } // O(n)
 
     // Tokenizacao
     static String[] Tokenizacao(String rawText) {
@@ -99,7 +100,7 @@ public class TextClean {
             TokenizerModel tokenizerModel = new TokenizerModel(modelInputStream);
             TokenizerME tokenizer = new TokenizerME(tokenizerModel);
 
-            String[] tokens = tokenizer.tokenize(rawText);
+            String[] tokens = tokenizer.tokenize(rawText); // O(n)
             return tokens;
 
         } catch (FileNotFoundException e) {
@@ -109,7 +110,7 @@ public class TextClean {
             // Handle exception
             return null;
         }
-    }
+    } // O(n)
 
     // Limpeza
     static String StopWords(String text) throws IOException {
@@ -117,19 +118,19 @@ public class TextClean {
         Path filePath = Path.of("demo\\models\\stopwords.txt");
         List<String> tokenizedText = Arrays.asList(Tokenizacao(text));
 
-        List<String> sotpWords = Files.readAllLines(filePath);
+        List<String> sotpWords = Files.readAllLines(filePath); // O(m)
 
         // Converte o texto para lowerCase
-        tokenizedText = tokenizedText.stream().map(line -> line).collect(Collectors.toList());
+        tokenizedText = tokenizedText.stream().map(line -> line).collect(Collectors.toList()); // O(n)
 
         // Remove todas as palavras em stopWords do nosso arquivo
-        tokenizedText.removeAll(sotpWords);
+        tokenizedText.removeAll(sotpWords); // O(n*m)
 
         String result = tokenizedText.stream().map(n -> String.valueOf(n))
-                .collect(Collectors.joining(" ", "", ""));
+                .collect(Collectors.joining(" ", "", "")); // O(n)
 
         return result;
-    }
+    } // O(n * m)
 
     // Tags das palavras
     static String[] POSTagger(String[] tokens) {
@@ -139,23 +140,23 @@ public class TextClean {
             POSTaggerME posTaggerME = new POSTaggerME(posModel);
 
             // Gera as tags com base nos tokens das palavras
-            String tags[] = posTaggerME.tag(tokens);
+            String tags[] = posTaggerME.tag(tokens); // O(n)
 
             return tags;
         } catch (IOException e) {
             // Handle exceptions
             return null;
         }
-    }
+    } // O(n)
 
     // Lematiza o texto ja tokenizado utilizando as Tags
     static String[] Lematizacao(String[] tokenizedText, String[] tagedText) {
-        String[] tokens = tokenizedText;
-        String[] tags = tagedText;
+        String[] tokens = tokenizedText; // O(n)
+        String[] tags = tagedText; // O(n)
 
         // Listas auxiliares para poder retirar os verbos e remontar o Array
-        List<String> tokensL = new ArrayList<>(Arrays.asList(tokens));
-        List<String> tagsL = new ArrayList<>(Arrays.asList(tags));
+        List<String> tokensL = new ArrayList<>(Arrays.asList(tokens)); // O(n)
+        List<String> tagsL = new ArrayList<>(Arrays.asList(tags)); // O(n)
 
         final Lemmatizer lemmatizer;
         final String[] lemmas;
@@ -168,25 +169,25 @@ public class TextClean {
                     tokensL.remove(i);
                     tagsL.remove(i);
                 }
-            }
+            } // O(n)
 
             // Remontagem dos Arrays sem os verbos
-            tokens = tokensL.toArray(new String[0]);
-            tags = tagsL.toArray(new String[0]);
+            tokens = tokensL.toArray(new String[0]); // O(m)
+            tags = tagsL.toArray(new String[0]); // O(m)
 
             lemmatizer = new Lemmatizer();
-            lemmas = lemmatizer.lemmatize(tokens, tags);
+            lemmas = lemmatizer.lemmatize(tokens, tags); // O(m)
 
             // Retorna as palavras ascentuadas para uma forma sem elas
             for (int i = 0; i < lemmas.length; i++) {
                 lemmas[i] = Normalizer.normalize(lemmas[i], Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")
                         .toLowerCase();
-            }
+            } // O(m)
 
             return lemmas;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-    }
+    } // O(n + m) já que é utilizado os valores iniciais 'n' e após remover os verbos se tornam 'm'
 }
