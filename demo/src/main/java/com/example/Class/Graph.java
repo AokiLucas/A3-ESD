@@ -53,31 +53,6 @@ class Graph<T> {
         }
     } // O(1)
 
-    /*
-     * public void hasVertex(T vertex) {
-     * if (graph.containsKey(vertex)) {
-     * System.out
-     * .println("The Graph contains " + vertex + " as a vertex with weight " +
-     * vertexWeights.get(vertex));
-     * } else {
-     * System.out.println("The Graph does not contain " + vertex + " as a vertex");
-     * }
-     * }
-     * 
-     * public void hasEdge(T source, T destination) {
-     * if (graph.get(source).containsKey(destination)) {
-     * System.out.println("The Graph has an edge between " + source + " (" +
-     * vertexWeights.get(source) + ") and "
-     * + destination + " ( " + vertexWeights.get(destination) +
-     * ") with edge weight "
-     * + graph.get(source).get(destination));
-     * } else {
-     * System.out.println("The Graph has no edge between " + source + " and " +
-     * destination);
-     * }
-     * }
-     */
-
     // Adicionar Vertice
     private void addVertex(T vertex) {
         graph.put(vertex, new HashMap<>());
