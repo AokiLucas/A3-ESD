@@ -39,14 +39,14 @@ public class ReadFiles {
                 int num1 = Integer.parseInt(fd1.getFileName().replaceAll("\\D+", ""));
                 int num2 = Integer.parseInt(fd2.getFileName().replaceAll("\\D+", ""));
                 return Integer.compare(num1, num2);
-            }); // O(n logn)
+            }); // O(nlogn)
 
             return fileList;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return fileList;
-    }
+    } //O(nlogn)
 
     // Da um print nos arquivos existentes dentro da pasta
     public static void printFiles(List<FileObject> fileList) {

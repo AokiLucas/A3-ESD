@@ -21,7 +21,7 @@ public class Main {
         // Classe dos arquivos
         // Incializar dando a pasta onde os arquivos estão
         String folderPath = "demo\\resumes";
-        List<FileObject> fileList = ReadFiles.readTxtFiles(folderPath);
+        List<FileObject> fileList = ReadFiles.readTxtFiles(folderPath);// O(nlogn)
 
         Scanner scanner = new Scanner(System.in);
         int number = -1;
@@ -105,7 +105,7 @@ public class Main {
         scanner.close();
     } /*
        * Dependendo de cada caso o programa toma complexidades diversar, mas em sua
-       * maioria ele vai ser O(n + mlogm + m^2 + q + r)
+       * maioria ele vai ser O(n+ nlogn + mlogm + m^2 + q + r)
        */
 
     public static void chooseFiles(Scanner scanner, List<FileObject> fileList, Graph<String> fullGraph,
