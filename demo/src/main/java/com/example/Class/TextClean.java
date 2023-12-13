@@ -64,10 +64,10 @@ public class TextClean {
         text = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text).replaceAll(""); // O(n)
 
         // Separa o nome dos autores da ultima linha
-        String[] autores = lastLine.split(","); // O(m)
+        String[] autores = lastLine.split(","); // O(n)
 
         // Formata o nome dos autores utilizando uma biblioteca
-        for (int i = 0; i < autores.length; i++) { // O(p)
+        for (int i = 0; i < autores.length; i++) { // O(n)
             autores[i] = WordUtils.capitalizeFully(autores[i].toLowerCase());
         }
 
@@ -118,19 +118,19 @@ public class TextClean {
         Path filePath = Path.of("demo\\models\\stopwords.txt");
         List<String> tokenizedText = Arrays.asList(Tokenizacao(text));
 
-        List<String> sotpWords = Files.readAllLines(filePath); // O(m)
+        List<String> sotpWords = Files.readAllLines(filePath); // O(n)
 
         // Converte o texto para lowerCase
         tokenizedText = tokenizedText.stream().map(line -> line).collect(Collectors.toList()); // O(n)
 
         // Remove todas as palavras em stopWords do nosso arquivo
-        tokenizedText.removeAll(sotpWords); // O(n*m)
+        tokenizedText.removeAll(sotpWords); // O(n^2)
 
         String result = tokenizedText.stream().map(n -> String.valueOf(n))
                 .collect(Collectors.joining(" ", "", "")); // O(n)
 
         return result;
-    } // O(n * m)
+    } // O(n^2)
 
     // Tags das palavras
     static String[] POSTagger(String[] tokens) {
@@ -172,22 +172,22 @@ public class TextClean {
             } // O(n)
 
             // Remontagem dos Arrays sem os verbos
-            tokens = tokensL.toArray(new String[0]); // O(m)
-            tags = tagsL.toArray(new String[0]); // O(m)
+            tokens = tokensL.toArray(new String[0]); // O(n)
+            tags = tagsL.toArray(new String[0]); // O(n)
 
             lemmatizer = new Lemmatizer();
-            lemmas = lemmatizer.lemmatize(tokens, tags); // O(m)
+            lemmas = lemmatizer.lemmatize(tokens, tags); // O(n)
 
             // Retorna as palavras ascentuadas para uma forma sem elas
             for (int i = 0; i < lemmas.length; i++) {
                 lemmas[i] = Normalizer.normalize(lemmas[i], Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")
                         .toLowerCase();
-            } // O(m)
+            } // O(n)
 
             return lemmas;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-    } // O(n + m) já que é utilizado os valores iniciais 'n' e após remover os verbos se tornam 'm'
+    } // O(2n) já que é utilizado os valores iniciais 'n' e após remover os verbos se tornam 'm'
 }

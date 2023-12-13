@@ -30,8 +30,8 @@ class Graph<T> {
 
     // Adicionar Aresta
     public void addEdge(T source, T destination, boolean bidirectional) {
-        // Se nao existir o vertice ele ira criar
-        if (!graph.containsKey(source)) {
+        // Se nao existir o vertice ele ira criar --o(n)= n
+        if (!graph.containsKey(source)) { 
             addVertex(source);
         }
         if (!graph.containsKey(destination)) {
@@ -51,29 +51,29 @@ class Graph<T> {
             Map<T, Integer> reverseEdges = graph.get(destination);
             reverseEdges.put(source, reverseEdges.getOrDefault(source, 0) + 1);
         }
-    } // O(1)
+    } // O(n)
 
     // Adicionar Vertice
     private void addVertex(T vertex) {
         graph.put(vertex, new HashMap<>());
         vertexWeights.put(vertex, 0);
-    } // O(1)
+    } // O(n)
 
     public void printGraph(String fileName, String graphPath, String filePoint) throws IOException {
 
         // folderCreater(filePath);
-        folderCreater(graphPath + "\\" + fileName); // O(1)
+        folderCreater(graphPath + "\\" + fileName); // O(n)
 
         FileWriter csvFileWriter = new FileWriter(graphPath + "\\" + fileName + "\\" + fileName + filePoint + ".csv");
         csvFileWriter.append("Vertice, peso (V), Aresta, peso (A)\n");
 
         if (filePoint.equals("_topics")) {
             // Pega os 10 primeiros vertices
-            List<T> mostImportant = getImportantVertices(); // O(nlogn)
-            List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10)); // O(m)
+            List<T> mostImportant = getImportantVertices(); // O(n)
+            List<T> top10 = mostImportant.subList(0, Math.min(mostImportant.size(), 10)); // O(n)
 
             // Gera o csv do grafo usando apenas os 10 primeiros vertices
-            csvGraphConstructor(top10, csvFileWriter); // O(m)
+            csvGraphConstructor(top10, csvFileWriter); // O(n)
         } else if (filePoint.equals("_graph")) {
             // Gera o csv do grafo utilizando todo o conjunto de vertices em 'graph'
             csvGraphConstructor(graph.keySet(), csvFileWriter); // O(n)
@@ -100,13 +100,13 @@ class Graph<T> {
         // Vertice
         for (T vertex : vertexKeySet) { // O(n)
             // Arestas
-            for (T node : graph.get(vertex).keySet()) { // O(m)
+            for (T node : graph.get(vertex).keySet()) { // O(n)
                 // Adiciona nossos vertices, arestas e seus pesos ao '.csv'
                 csvWriter(csvFileWriter, vertex.toString() + ", (" + vertexWeights.get(vertex) + "), ",
                         node.toString() + ", (" + graph.get(vertex).get(node) + ") ");
             }
         }
-    } // O(n * m)
+    } // O(n^2)
 
     public List<T> getImportantVertices() {
         // Cria um mapa que salva os valores dos scores
@@ -126,7 +126,7 @@ class Graph<T> {
         vertices.sort((v1, v2) -> scores.get(v2) - scores.get(v1)); // O(nlogn)
 
         return vertices;
-    } // O(n * m) + O(nlogn)
+    } // O(n^2) + O(nlogn)
       // Dependendo dequal for maior é o que será considerado dominate
       // para continuação será usado O(nlogn)
 

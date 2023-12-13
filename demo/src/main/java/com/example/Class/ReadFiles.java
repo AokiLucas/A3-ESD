@@ -18,13 +18,13 @@ public class ReadFiles {
                     .filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".txt"))
                     .forEach(p -> {
-                        // Salva o nome dos arquivos sem a extensao
+                        // Salva o nome dos arquivos sem a extensao O(n)
                         String fileNameWithoutExtension = p.getFileName().toString();
                         if (fileNameWithoutExtension.indexOf(".") > 0)
                             fileNameWithoutExtension = fileNameWithoutExtension.substring(0,
                                     fileNameWithoutExtension.lastIndexOf("."));
 
-                        // Salva o path sem a extensao extensao
+                        // Salva o path sem a extensao extensao O(n)
                         String filePathWithoutExtension = p.toString();
                         if (filePathWithoutExtension.indexOf(".") > 0)
                             filePathWithoutExtension = filePathWithoutExtension.substring(0,
